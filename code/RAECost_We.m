@@ -19,9 +19,11 @@ lambda(4) = lambda2(3);
 
 % disp('DEBUGGING: DELETE AFTERWARDS')
 % data_cell=data_cell(1:2);
+labels_We = 0.*ones(length(data_cell_We), 2);
+labels_We = labels_We';
 
 [costRAE, gradRAE, allKids] = computeCostAndGradRAE([], theta1, 0, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
-    (alpha_cat)*lambda, We_orig , data_cell_We, [], freq_orig_We, f, f_prime);
+    (alpha_cat)*lambda, We_orig , data_cell_We, labels_We, freq_orig_We, f, f_prime);
 
 
 WegradRAE = gradRAE(end-szWe+1:end);
