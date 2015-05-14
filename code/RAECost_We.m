@@ -19,11 +19,11 @@ lambda(4) = lambda2(3);
 
 % disp('DEBUGGING: DELETE AFTERWARDS')
 % data_cell=data_cell(1:2);
-labels_We = 0.*ones(length(data_cell_We), 2);
+labels_We = 0.*ones(length(data_cell_We), 1);
 labels_We = labels_We';
 
 [costRAE, gradRAE, allKids] = computeCostAndGradRAE([], theta1, 0, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
-    (alpha_cat)*lambda, We_orig , data_cell_We, labels_We, freq_orig_We, f, f_prime);
+    (alpha_cat)*lambda, We_orig , [data_cell_We; data_cell], [labels_We labels], [freq_orig_We; freq_orig], f, f_prime);
 
 
 WegradRAE = gradRAE(end-szWe+1:end);
@@ -31,7 +31,7 @@ gradRAE(end-szWe+1:end) = 0;
 gradRAE = [gradRAE; zeros(szbcat+szWcat,1)];
 gradRAE(end-szWe+1:end) = WegradRAE;
 
-[costSUP, gradSUP] = computeCostAndGradRAE(allKids, theta2, 1, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
+[costSUP, gradSUP] = computeCostAndGradRAE(allKids(length(labels_We)+1:end,:), theta2, 1, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
     (1-alpha_cat)*lambda2, zeros(size(We_orig)), data_cell, labels, freq_orig, f, f_prime);
 
 cost_total =  costRAE + costSUP;
