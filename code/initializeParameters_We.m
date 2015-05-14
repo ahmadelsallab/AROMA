@@ -8,8 +8,9 @@ W3 = rand(visibleSize, hiddenSize) * 2 * r - r;
 W4 = rand(visibleSize, hiddenSize) * 2 * r - r;
 
 %We = 1e-3*(rand(hiddenSize, dictionary_length)*2*r-r);
-load('input_data_We.mat');
+load('../data/ATB_We/final_net.mat');
 We = NM_strNetParams.cWeights{1};
+We = We';
 
 Wcat = rand(cat_size, hiddenSize) * 2 * r - r;
 
