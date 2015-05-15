@@ -31,8 +31,35 @@ gradRAE(end-szWe+1:end) = 0;
 gradRAE = [gradRAE; zeros(szbcat+szWcat,1)];
 gradRAE(end-szWe+1:end) = WegradRAE;
 
+% 
+% [costRAE_We, gradRAE_We, allKids_We] = computeCostAndGradRAE([], theta1, 0, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
+%     (alpha_cat)*lambda, We_orig , data_cell_We, labels_We, freq_orig_We, f, f_prime);
+% 
+% 
+% WegradRAE_We = gradRAE_We(end-szWe+1:end);
+% gradRAE_We(end-szWe+1:end) = 0;
+% gradRAE_We = [gradRAE_We; zeros(szbcat+szWcat,1)];
+% gradRAE_We(end-szWe+1:end) = WegradRAE_We;
+
+
+% [costRAE, gradRAE, allKids] = computeCostAndGradRAE([], theta1, 0, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
+%     (alpha_cat)*lambda, We_orig , data_cell, labels, freq_orig, f, f_prime);
+% 
+% 
+% WegradRAE = gradRAE(end-szWe+1:end);
+% gradRAE(end-szWe+1:end) = 0;
+% gradRAE = [gradRAE; zeros(szbcat+szWcat,1)];
+% gradRAE(end-szWe+1:end) = WegradRAE;
+
+
+
+
 [costSUP, gradSUP] = computeCostAndGradRAE(allKids(length(labels_We)+1:end,:), theta2, 1, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
     (1-alpha_cat)*lambda2, zeros(size(We_orig)), data_cell, labels, freq_orig, f, f_prime);
+
+% cost_total =  costRAE_We + costRAE + costSUP;
+% grad_total =  gradRAE_We + gradRAE + gradSUP;
+
 
 cost_total =  costRAE + costSUP;
 grad_total =  gradRAE + gradSUP;
