@@ -166,5 +166,5 @@ fclose(fid_Qalb);
 fclose(fid_pos);
 fclose(fid_neg);
 fclose(fid_Voc);
-save('vocab_Qalb_ATB.mat', 'words');
+save('../data/Qalb/vocab_Qalb_ATB.mat', 'words');
 save(['preprocess_Qalb_ATB' num2str(nSentences) '.mat']);
