@@ -97,7 +97,8 @@ else
         
         % finding the pair with smallest reconstruction error for constructing tree
         [J_min J_minpos] = min(J);
-        
+%          J_minpos = 1;
+%          J_min = J(1);
         
         Tree.node_y1c1(:,sl+j) = y1c1(:,J_minpos);
         Tree.node_y2c2(:,sl+j) = y2c2(:,J_minpos);

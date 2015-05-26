@@ -14,7 +14,7 @@ txtFileName = '..\..\Datasets\Qalb\Qalb compiled.txt';
     words = {};
     num = 1;
     allSStr = {};
-    nSentences = 1000;
+    nSentences = 10000;
     % Load the positive and negative instances
     % Save in the positive and negative separate txt files
     % Save positive and negative cell arrays
@@ -29,9 +29,8 @@ txtFileName = '..\..\Datasets\Qalb\Qalb compiled.txt';
         words = [words; lineWords];
         num = num + 1;
         line = fgets(fid_Qalb);
-        %save(['preprocess_Qalb_ATB' num2str(nSentences) '.mat'], 'allSStr', 'words', '-v7.3');
+        save(['preprocess_Qalb_ATB' num2str(nSentences) '.mat'], 'allSStr', 'words');
     end
-    save(['preprocess_Qalb_ATB' num2str(nSentences) '.mat'], 'allSStr', 'words', '-v7.3');
     
 %load preprocess_Qalb_ATB
 
@@ -50,10 +49,10 @@ annotationsFileName = '..\..\Datasets\ATB\annotations.txt';
     fid_ATB = fopen(txtFileName,'r','n','UTF-8');
     labels = csvread(annotationsFileName);
     
-    file_pos = '../data/Qalb/rt-polarity.pos';
+    file_pos = 'rt-polarity.pos';
     fid_pos = fopen(file_pos, 'w', 'n', 'UTF-8');
 
-    file_neg = '../data/Qalb/rt-polarity.neg';
+    file_neg = 'rt-polarity.neg';
     fid_neg = fopen(file_neg, 'w', 'n', 'UTF-8')
 
     % Get the sentences line by line
@@ -117,7 +116,7 @@ wordMap = containers.Map(words,1:length(words));
     % Save the workspace
     allSNum_Qalb = allSNum;
     allSStr_Qalb = allSStr;
-    save('../data/Qalb/rt-polarity_Qalb_binarized.mat','allSNum_Qalb','allSStr_Qalb', '-v7.3');
+    save('rt-polarity_Qalb_binarized.mat','allSNum_Qalb','allSStr_Qalb');
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SCORE ATB %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
@@ -134,7 +133,7 @@ wordMap = containers.Map(words,1:length(words));
         allSNum{lineIdx} = cell2mat(lineWordsIndices);
     end
     % Save the positive workspace
-    save('../data/Qalb/rt-polarity_pos_binarized.mat','allSNum','allSStr', '-v7.3');
+    save('rt-polarity_pos_binarized.mat','allSNum','allSStr');
 	allSNum_Pos = allSNum;
 	
     % Negative workspace
@@ -148,13 +147,13 @@ wordMap = containers.Map(words,1:length(words));
         allSNum{lineIdx} = cell2mat(lineWordsIndices);
     end
     % Save the positive workspace
-    save('../data/Qalb/rt-polarity_neg_binarized.mat','allSNum','allSStr', '-v7.3');
+    save('rt-polarity_neg_binarized.mat','allSNum','allSStr');
 	allSNum_Neg = allSNum;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MERGE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%		
 allSNum_Qalb_ATB = [allSNum_Qalb allSNum_Pos allSNum_Neg];
 allSStr_Qalb_ATB = [allSStr_Qalb allSStr_pos allSStr_neg];
-save('../data/Qalb/rt-polarity_Qalb_ATB_binarized.mat','allSNum_Qalb_ATB','allSStr_Qalb_ATB', '-v7.3');
+save('rt-polarity_Qalb_ATB_binarized.mat','allSNum_Qalb_ATB','allSStr_Qalb_ATB');
 
 fid_Voc = fopen('vocab_Qalb_ATB.txt', 'w', 'n', 'UTF-8');
 for i = 1 : length(words)
@@ -167,5 +166,5 @@ fclose(fid_Qalb);
 fclose(fid_pos);
 fclose(fid_neg);
 fclose(fid_Voc);
-save('../data/Qalb/vocab_Qalb_ATB.mat', 'words', '-v7.3');
-save(['preprocess_Qalb_ATB' num2str(nSentences) '.mat'], '-v7.3');
+save('../data/Qalb/vocab_Qalb_ATB.mat', 'words');
+save(['preprocess_Qalb_ATB' num2str(nSentences) '.mat']);

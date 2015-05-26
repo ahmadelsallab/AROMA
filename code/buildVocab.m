@@ -4,10 +4,10 @@ function [words, allSStr, allSNum] = buildVocab(txtFileName, annotationsFileName
     fid = fopen(txtFileName,'r','n','UTF-8');
     labels = csvread(annotationsFileName);
     
-    file_pos = 'rt-polarity.pos';
+    file_pos = '../data/ATB/rt-polarity.pos';
     fid_pos = fopen(file_pos, 'w', 'n', 'UTF-8');
 
-    file_neg = 'rt-polarity.neg';
+    file_neg = '../data/ATB/rt-polarity.neg';
     fid_neg = fopen(file_neg, 'w', 'n', 'UTF-8')
 
     % Get the sentences line by line
@@ -67,7 +67,7 @@ function [words, allSStr, allSNum] = buildVocab(txtFileName, annotationsFileName
         allSNum{lineIdx} = cell2mat(lineWordsIndices);
     end
     % Save the positive workspace
-    save('rt-polarity_pos_binarized.mat','allSNum','allSStr');
+    save('../data/ATB/rt-polarity_pos_binarized.mat','allSNum','allSStr', '-v7.3');
 
     % Negative workspace
     allSStr = allSStr_neg;
@@ -80,7 +80,7 @@ function [words, allSStr, allSNum] = buildVocab(txtFileName, annotationsFileName
         allSNum{lineIdx} = cell2mat(lineWordsIndices);
     end
     % Save the positive workspace
-    save('rt-polarity_neg_binarized.mat','allSNum','allSStr');
+    save('../data/ATB/rt-polarity_neg_binarized.mat','allSNum','allSStr', '-v7.3');
 
     % Close read and write files
     fclose(fid);

@@ -33,7 +33,7 @@ func_prime = @norm1tanh_prime;
 % parameters for the optimizer
 options.Method = 'lbfgs';
 options.display = 'on';
-options.maxIter = 90;
+options.maxIter = 20;
 
 disp(params);
 disp(options);

@@ -11,5 +11,5 @@ for i = 1 : length(words)
     fprintf(fid, '%s\n', words{i});
 end
 fclose(fid);
-save('vocab.mat', 'words');
+save('../data/ATB/vocab.mat', 'words');
 save preprocess.mat;
