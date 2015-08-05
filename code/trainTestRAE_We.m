@@ -47,7 +47,6 @@ disp(options);
 % set this to different folds (1-10) and average to reproduce the results in the paper
 params.CVNUM = 1;
 preProFile = ['../data/ATB/RTData_CV' num2str(params.CVNUM) '.mat'];
-preProFile_Qalb_ATB = '../data/Qalb/RTData_Qalb_ATB.mat';
 
 % read in polarity dataset
 if ~exist(preProFile,'file')
@@ -57,18 +56,6 @@ else
 end
 sent_freq = ones(length(allSNum),1);
 [~,dictionary_length] = size(We2);
-
-% read in polarity dataset
-if ~exist(preProFile_Qalb_ATB,'file')
-    read_rtPolarity_Qalb_ATB
-else
-    load(preProFile_Qalb_ATB,'We2','allSNum_Qalb_ATB');
-end
-
-freq_We = ones(length(allSNum_Qalb_ATB),1);
-[~,dictionary_length] = size(We2);
-index_list = cell2mat(allSNum_Qalb_ATB');
-freq_We = histc(index_list,1:size(We2,2));
 
 % split this current fold into train and test
 index_list_train = cell2mat(allSNum(train_ind)');
@@ -117,8 +104,9 @@ if params.trainModel
     sent_freq_here = sent_freq(1:numExamples);
     
     % Set unsupervised word embedding dataset
-    snum_We = allSNum_Qalb_ATB;
-    
+    %snum_We = allSNum;
+    snum_We = snum;
+    freq_We = freq_train;
         
     [opttheta, cost] = minFunc( @(p)RAECost_We(p, params.alpha_cat, cat_size,params.beta, dictionary_length, params.embedding_size, ...
         params.lambda, We2, snum, lbl, freq_train, snum_We, freq_We, sent_freq, func, func_prime), ...

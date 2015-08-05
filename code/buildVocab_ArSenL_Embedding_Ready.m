@@ -1,15 +1,20 @@
-function [words, allSStr, allSNum] = buildVocab_We(txtFileName, annotationsFileName)
+function [words, allSStr, allSNum] = buildVocab_ArSenL_Embedding_Ready(txtFileName, indicesFileName, annotationsFileName)
     
     % Open the file in UTF-8
     fid = fopen(txtFileName,'r','n','UTF-8');
     labels = csvread(annotationsFileName);
+    indices = csvread(indicesFileName);
     
-    file_pos = '../data/ATB_We/rt-polarity.pos';
+    file_pos = '../data/ATB_ArSenL_Embedding/rt-polarity.pos';
     fid_pos = fopen(file_pos, 'w', 'n', 'UTF-8');
 
-    file_neg = '../data/ATB_We/rt-polarity.neg';
-    fid_neg = fopen(file_neg, 'w', 'n', 'UTF-8')
+    file_neg = '../data/ATB_ArSenL_Embedding/rt-polarity.neg';
+    fid_neg = fopen(file_neg, 'w', 'n', 'UTF-8');
 
+    file_all = '../data/ATB_ArSenL_Embedding/rt-polarity.all';
+    fid_all = fopen(file_all, 'w', 'n', 'UTF-8');
+
+    
     % Get the sentences line by line
 
     line = fgets(fid);
@@ -17,6 +22,12 @@ function [words, allSStr, allSNum] = buildVocab_We(txtFileName, annotationsFileN
     words = {};
     allSStr_pos = {};
     allSStr_neg = {};
+    allSNum_pos = {};
+    allSNum_neg = {};
+    %%% NEW
+    allSStr = {};
+    allSNum = {};
+    %%%
     num = 1;
     num_pos = 1;
     num_neg = 1;
@@ -27,61 +38,60 @@ function [words, allSStr, allSNum] = buildVocab_We(txtFileName, annotationsFileN
     % Build the vocabulary
     while line > 0        
         %data = [data; line];
-        
+        line = strtrim(line);
         % Get the words of each line
         %lineWords = textscan(line,'%s','delimiter',' ');
+        non_zero = find(indices(num,:) == 0);
+        non_zero = non_zero(1);
+        line_indices = indices(num, 1 : non_zero - 1);
         if(labels(num) == 1)
-            fprintf(fid_pos, line);
+            fprintf(fid_pos, [line '\n']);
             lineWords = splitLine(line);
             allSStr_pos{num_pos} = lineWords';
+            allSNum_pos{num_pos} = line_indices;
             num_pos = num_pos + 1;
             words = [words; lineWords];
         elseif(labels(num) == 2)
-            fprintf(fid_neg, line);
+            fprintf(fid_neg, [line '\n']);
             lineWords = splitLine(line);
             allSStr_neg{num_neg} = lineWords';
+            allSNum_neg{num_neg} = line_indices;
             num_neg = num_neg + 1;
             words = [words; lineWords];
         end
+        %%% NEW
+        fprintf(fid_all, [line '\n']);
+        allSStr{num} = lineWords';
+        allSNum{num} = line_indices;
+        %%%
         num = num + 1;
         line = fgets(fid);
     end
+    %%% NEW
+    %labels = labels';
+    %save('../data/ATB_ArSenL_Embedding/rt-polarity_binarized.mat','allSNum','allSStr', 'labels');%%%
+    %%%%
     
-
-
+    
     % % Make unique vocabulary
     % words = unique(words');
-    load('../data/ATB_We/vocab_We.mat', 'words');
-    wordMap = containers.Map(words,1:length(words));
-    
+    load('../data/ATB_ArSenL_Embedding/vocab_ArSenL_Embedding.mat', 'words');    
     
     % Now score for each sentence the indices of words
     
     % Positive workspace
     allSStr = allSStr_pos;
-    allSNum = {};
-    for lineIdx = 1 : size(allSStr, 2)
-        lineWordsIndices = {};
-        for wordIdx = 1 : size(allSStr{lineIdx}, 2)
-            lineWordsIndices{wordIdx} = wordMap(allSStr{lineIdx}{wordIdx});
-        end
-        allSNum{lineIdx} = cell2mat(lineWordsIndices);
-    end
+    allSNum = allSNum_pos;
+
     % Save the positive workspace
-    save('../data/ATB_We/rt-polarity_pos_binarized.mat','allSNum','allSStr');
+    save('../data/ATB_ArSenL_Embedding/rt-polarity_pos_binarized.mat','allSNum','allSStr');
 
     % Negative workspace
     allSStr = allSStr_neg;
-    allSNum = {};
-    for lineIdx = 1 : size(allSStr, 2)
-        lineWordsIndices = {};
-        for wordIdx = 1 : size(allSStr{lineIdx}, 2)
-            lineWordsIndices{wordIdx} = wordMap(allSStr{lineIdx}{wordIdx});
-        end
-        allSNum{lineIdx} = cell2mat(lineWordsIndices);
-    end
+    allSNum = allSNum_neg;
+
     % Save the positive workspace
-    save('../data/ATB_We/rt-polarity_neg_binarized.mat','allSNum','allSStr');
+    save('../data/ATB_ArSenL_Embedding/rt-polarity_neg_binarized.mat','allSNum','allSStr');
 
     % Close read and write files
     fclose(fid);

@@ -16,7 +16,9 @@ addpath(genpath('tools/'))
 params.trainModel = 1;
 
 % node and word size
-params.embedding_size = 50;
+load('../data/ATB_ArSenL_Embedding/final_net.mat');
+We = NM_strNetParams.cWeights{1};
+params.embedding_size = size(We, 2);
 
 % Relative weighting of reconstruction error and categorization error
 params.alpha_cat = 0.2;
@@ -46,29 +48,16 @@ disp(options);
 %%%%%%%%%%%%%%%%%%%%%%
 % set this to different folds (1-10) and average to reproduce the results in the paper
 params.CVNUM = 1;
-preProFile = ['../data/ATB/RTData_CV' num2str(params.CVNUM) '.mat'];
-preProFile_Qalb_ATB = '../data/Qalb/RTData_Qalb_ATB.mat';
+preProFile = ['../data/ATB_ArSenL_Embedding/RTData_CV' num2str(params.CVNUM) '.mat'];
 
 % read in polarity dataset
 if ~exist(preProFile,'file')
-    read_rtPolarity_ATB
+    read_rtPolarity_ATB_ArSenL_embedding
 else
     load(preProFile, 'labels','train_ind','test_ind', 'cv_ind','We2','allSNum','test_nums');
 end
 sent_freq = ones(length(allSNum),1);
 [~,dictionary_length] = size(We2);
-
-% read in polarity dataset
-if ~exist(preProFile_Qalb_ATB,'file')
-    read_rtPolarity_Qalb_ATB
-else
-    load(preProFile_Qalb_ATB,'We2','allSNum_Qalb_ATB');
-end
-
-freq_We = ones(length(allSNum_Qalb_ATB),1);
-[~,dictionary_length] = size(We2);
-index_list = cell2mat(allSNum_Qalb_ATB');
-freq_We = histc(index_list,1:size(We2,2));
 
 % split this current fold into train and test
 index_list_train = cell2mat(allSNum(train_ind)');
@@ -84,7 +73,6 @@ freq_train = freq_train/sum(freq_train);
 freq_cv = freq_cv/sum(freq_cv);
 freq_test = freq_test/sum(freq_test);
 
-
 cat_size=1;% for multinomial distributions this would be >1
 numExamples = length(allSNum(train_ind));
 
@@ -93,7 +81,7 @@ numExamples = length(allSNum(train_ind));
 %%%%%%%%%%%%%%%%%%%%%%
 % Initialize parameters
 %%%%%%%%%%%%%%%%%%%%%%
-theta = initializeParameters(params.embedding_size, params.embedding_size, cat_size, dictionary_length);
+theta = initializeParameters_ArSenL_embedding(params.embedding_size, params.embedding_size, cat_size);
 
 
 %%%%%%%%%%%%%%%%%%%%%%
@@ -117,24 +105,24 @@ if params.trainModel
     sent_freq_here = sent_freq(1:numExamples);
     
     % Set unsupervised word embedding dataset
-    snum_We = allSNum_Qalb_ATB;
-    
+    snum_We = allSNum(train_ind);
+    sent_freq_We = sent_freq;
         
-    [opttheta, cost] = minFunc( @(p)RAECost_We(p, params.alpha_cat, cat_size,params.beta, dictionary_length, params.embedding_size, ...
-        params.lambda, We2, snum, lbl, freq_train, snum_We, freq_We, sent_freq, func, func_prime), ...
+    [opttheta, cost] = minFunc( @(p)RAECost(p, params.alpha_cat, cat_size,params.beta, dictionary_length, params.embedding_size, ...
+        params.lambda, We2, snum, lbl, freq_train, sent_freq, func, func_prime), ...
         theta, options);
     theta = opttheta;
     
     [W1, W2, W3, W4, b1, b2, b3, Wcat,bcat, We] = getW(1, theta, params.embedding_size, cat_size, dictionary_length);
     
-    save(['../output/ATB/savedParams_CV' num2str(params.CVNUM) '.mat'],'opttheta','params','options');
+    save(['../output/ATB_ArSenL_Embedding/savedParams_CV' num2str(params.CVNUM) '.mat'],'opttheta','params','options');
     classifyWithRAE_ATB
     
 else
     if params.CVNUM ~= 1
         error('This is the optimal file for CV-fold 1')
     end
-    load('../output/ATB/optParams_RT_CV1.mat')
+    load('../output/ATB_ArSenL_Embedding/optParams_RT_CV1.mat')
     params.embedding_size = params.wordSize;
     params.alpha_cat = 0.2;
     params.trainModel = 0;

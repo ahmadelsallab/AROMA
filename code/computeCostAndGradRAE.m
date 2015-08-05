@@ -1,5 +1,5 @@
 function [cost_total,grad_total, allKids] = computeCostAndGradRAE(allKids, theta, updateWcat, alpha_cat, cat_size, beta, ...
-    dictionary_length,  hiddenSize, lambda, We_orig, data_cell, labels, freq_orig, f, f_prime)
+    dictionary_length,  hiddenSize, lambda, We_orig, data_cell, labels, freq_orig, f, f_prime, we)
 
 lambdaW = lambda(1);
 lambdaL = lambda(2);
@@ -52,7 +52,10 @@ parfor ii = range;
             
         else
             Tree = forwardPropRAE([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
-            allKids{ii} = Tree.kids;
+            if(we == 0)            
+                allKids{ii} = Tree.kids;
+            end
+            
             cost = sum(Tree.nodeScores(sl+1:end)) ;
             num_nodes = num_nodes + sl;
         end

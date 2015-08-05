@@ -65,10 +65,9 @@ else
     load(preProFile_Qalb_ATB,'We2','allSNum_Qalb_ATB');
 end
 
-freq_We = ones(length(allSNum_Qalb_ATB),1);
+sent_freq_We = ones(length(allSNum_Qalb_ATB),1);
 [~,dictionary_length] = size(We2);
-index_list = cell2mat(allSNum_Qalb_ATB');
-freq_We = histc(index_list,1:size(We2,2));
+
 
 % split this current fold into train and test
 index_list_train = cell2mat(allSNum(train_ind)');
@@ -121,7 +120,7 @@ if params.trainModel
     
         
     [opttheta, cost] = minFunc( @(p)RAECost_We(p, params.alpha_cat, cat_size,params.beta, dictionary_length, params.embedding_size, ...
-        params.lambda, We2, snum, lbl, freq_train, snum_We, freq_We, sent_freq, func, func_prime), ...
+        params.lambda, We2, snum, lbl, freq_train, snum_We, sent_freq, sent_freq_We, func, func_prime), ...
         theta, options);
     theta = opttheta;
     
