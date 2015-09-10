@@ -6,6 +6,7 @@
 % See http://www.socher.org for more information or to ask questions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear, clc;
+global CONFIG_strParams;
 % load minFunc
 addpath(genpath('tools/'))
 
@@ -16,9 +17,7 @@ addpath(genpath('tools/'))
 params.trainModel = 1;
 
 % node and word size
-load('../data/ATB_ArSenL_Embedding/final_net.mat');
-We = NM_strNetParams.cWeights{1};
-params.embedding_size = size(We, 2);
+params.embedding_size = 50;
 
 % Relative weighting of reconstruction error and categorization error
 params.alpha_cat = 0.2;
@@ -35,10 +34,8 @@ func_prime = @norm1tanh_prime;
 % parameters for the optimizer
 options.Method = 'lbfgs';
 options.display = 'on';
-options.maxIter = 90;
-if(~isempty(CONFIG_strParamsGUI))
-    params.embedding_size = CONFIG_strParamsGUI.nMaxIter;
-end
+options.maxIter = CONFIG_strParams.nMaxIter;
+
 disp(params);
 disp(options);
 
@@ -50,14 +47,15 @@ disp(options);
 %%%%%%%%%%%%%%%%%%%%%%
 % set this to different folds (1-10) and average to reproduce the results in the paper
 params.CVNUM = 1;
-preProFile = ['../data/ATB_ArSenL_Embedding/RTData_CV' num2str(params.CVNUM) '.mat'];
+preProFile = ['../data/ATB/RTData_CV' num2str(params.CVNUM) '.mat'];
 
-% read in polarity dataset
-if ~exist(preProFile,'file')
-    read_rtPolarity_ATB_ArSenL_embedding
-else
-    load(preProFile, 'labels','train_ind','test_ind', 'cv_ind','We2','allSNum','test_nums');
-end
+% % read in polarity dataset
+% if ~exist(preProFile,'file')
+%     read_rtPolarity_ATB
+% else
+%     load(preProFile, 'labels','train_ind','test_ind', 'cv_ind','We2','allSNum','test_nums');
+% end
+load(preProFile, 'labels','train_ind','test_ind', 'cv_ind','We2','allSNum','test_nums');
 sent_freq = ones(length(allSNum),1);
 [~,dictionary_length] = size(We2);
 
@@ -83,7 +81,7 @@ numExamples = length(allSNum(train_ind));
 %%%%%%%%%%%%%%%%%%%%%%
 % Initialize parameters
 %%%%%%%%%%%%%%%%%%%%%%
-theta = initializeParameters_ArSenL_embedding(params.embedding_size, params.embedding_size, cat_size);
+theta = NM_initializeRAEParameters(params.embedding_size, params.embedding_size, cat_size, dictionary_length);
 
 
 %%%%%%%%%%%%%%%%%%%%%%
@@ -117,14 +115,14 @@ if params.trainModel
     
     [W1, W2, W3, W4, b1, b2, b3, Wcat,bcat, We] = getW(1, theta, params.embedding_size, cat_size, dictionary_length);
     
-    save(['../output/ATB_ArSenL_Embedding/savedParams_CV' num2str(params.CVNUM) '.mat'],'opttheta','params','options');
+    save(['../output/ATB/savedParams_CV' num2str(params.CVNUM) '.mat'],'opttheta','params','options');
     classifyWithRAE_ATB
     
 else
     if params.CVNUM ~= 1
         error('This is the optimal file for CV-fold 1')
     end
-    load('../output/ATB_ArSenL_Embedding/optParams_RT_CV1.mat')
+    load('../output/ATB/optParams_RT_CV1.mat')
     params.embedding_size = params.wordSize;
     params.alpha_cat = 0.2;
     params.trainModel = 0;

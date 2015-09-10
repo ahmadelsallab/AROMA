@@ -4,7 +4,12 @@ clear, clc;
 txtFileName = '..\..\Datasets\ArSenL\corpus lemmas.txt';
 indicesFileName = '..\..\Datasets\ArSenL\indices.txt';
 annotationsFileName = '..\..\Datasets\ArSenL\annotation_sentiment.txt';
-
+global CONFIG_strParamsGUI;
+if(~isempty(CONFIG_strParamsGUI))
+    txtFileName = CONFIG_strParamsGUI.sUnsupervisedWeDatasetPath;
+    indicesFileName = CONFIG_strParamsGUI.sIndicesFilePath;
+    annotationsFileName = CONFIG_strParamsGUI.sAnnotationsFilePath;
+end
 [words, allSStr, allSNum] = buildVocab_ArSenL_We_Ready(txtFileName, indicesFileName, annotationsFileName);
 
 % fid = fopen('vocab.txt', 'w', 'n', 'UTF-8');

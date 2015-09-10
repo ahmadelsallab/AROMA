@@ -38,7 +38,10 @@ func_prime = @norm1tanh_prime;
 options.Method = 'lbfgs';
 options.display = 'on';
 options.maxIter = 90;
-
+global CONFIG_strParamsGUI;
+if(~isempty(CONFIG_strParamsGUI))
+    params.embedding_size = CONFIG_strParamsGUI.nMaxIter;
+end
 disp(params);
 disp(options);
 

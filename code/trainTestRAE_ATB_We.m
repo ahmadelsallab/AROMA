@@ -17,7 +17,10 @@ params.trainModel = 1;
 
 % node and word size
 params.embedding_size = 50;
-
+global CONFIG_strParamsGUI;
+if(~isempty(CONFIG_strParamsGUI))
+    params.embedding_size = CONFIG_strParamsGUI.nEmbeddingSize;
+end
 % Relative weighting of reconstruction error and categorization error
 params.alpha_cat = 0.2;
 
@@ -34,7 +37,10 @@ func_prime = @norm1tanh_prime;
 options.Method = 'lbfgs';
 options.display = 'on';
 options.maxIter = 90;
-
+global CONFIG_strParamsGUI;
+if(~isempty(CONFIG_strParamsGUI))
+    params.embedding_size = CONFIG_strParamsGUI.nMaxIter;
+end
 disp(params);
 disp(options);
 

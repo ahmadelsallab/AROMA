@@ -1,8 +1,16 @@
 clear, clc;
 
 % Build the vocab cell array
-txtFileName = '..\..\Datasets\ATB\input\ATB1v3_UTF8.txt';
-annotationsFileName = '..\..\Datasets\ATB\annotations.txt';
+%txtFileName = '..\..\Datasets\ATB\input\ATB1v3_UTF8.txt';%..\..\Datasets\ArSenL\corpus lemmas.txt
+%annotationsFileName = '..\..\Datasets\ATB\annotations.txt';%..\..\Datasets\ArSenL\annotation_sentiment.txt
+%txtFileName = '..\..\Datasets\ArSenL\corpus lemmas.txt';
+txtFileName = '..\..\Datasets\ATB\punctuations_handled\ATB (preprocessed tokens).txt';
+annotationsFileName = '..\..\Datasets\ArSenL\annotation_sentiment.txt';
+global CONFIG_strParamsGUI;
+if(~isempty(CONFIG_strParamsGUI))
+    txtFileName = CONFIG_strParamsGUI.sSupervisedDataSetPath;
+    annotationsFileName = CONFIG_strParamsGUI.sAnnotationsFilePath;
+end
 dirName = ['..\data\ATB\'];   
 % Open the file in UTF-8
 fid = fopen(txtFileName,'r','n','UTF-8');
@@ -57,14 +65,14 @@ for i = 1 : length(words)
     fprintf(fid_vocab, '%s\n', words{i});
 end
 
-% Savfe the vocab workspace
-save([dirName '\vocab.mat'], 'words');
+
 
 
 % Make unique vocabulary
 words = unique(words);
 wordMap = containers.Map(words,1:length(words));
-
+% Save the vocab workspace
+save([dirName '\vocab.mat'], 'words');
 
 % Now score for each sentence the indices of words
 

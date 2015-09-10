@@ -5,7 +5,11 @@ clear, clc;
 %annotationsFileName = '..\..\Datasets\ATB\annotations.txt';
 txtFileName = '..\..\Datasets\ArSenL\corpus lemmas.txt';
 annotationsFileName = '..\..\Datasets\ArSenL\annotation_sentiment.txt';
-
+global CONFIG_strParamsGUI;
+if(~isempty(CONFIG_strParamsGUI))
+    txtFileName = CONFIG_strParamsGUI.sSupervisedDataSetPath;
+    annotationsFileName = CONFIG_strParamsGUI.sAnnotationsFilePath;
+end
 [words, allSStr, allSNum] = buildVocab_We(txtFileName, annotationsFileName);
 
 % fid = fopen('vocab.txt', 'w', 'n', 'UTF-8');
