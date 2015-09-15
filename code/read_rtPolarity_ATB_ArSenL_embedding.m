@@ -9,7 +9,7 @@ useTrees = 0;
 %sizeWe = [50  length(words)];
 %r  = 0.05;   % we'll choose weights uniformly from the interval [-r, r]
 %We = rand(sizeWe) * 2 * r - r;
-load('../data/ATB_ArSenL_Embedding/final_net.mat');
+load('../data/ATB_ArSenL_Embedding/final_net_ArSenL_embedding.mat');
 We = NM_strNetParams.cWeights{1};
 We = We';
 sizeWe = size(We);

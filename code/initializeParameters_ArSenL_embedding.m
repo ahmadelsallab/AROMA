@@ -8,7 +8,7 @@ W3 = rand(visibleSize, hiddenSize) * 2 * r - r;
 W4 = rand(visibleSize, hiddenSize) * 2 * r - r;
 
 %We = 1e-3*(rand(hiddenSize, dictionary_length)*2*r-r);
-load('../data/ATB_ArSenL_Embedding/final_net.mat');
+load('../data/ATB_ArSenL_Embedding/final_net_ArSenL_embedding.mat');
 We = NM_strNetParams.cWeights{1};
 We = We';
 

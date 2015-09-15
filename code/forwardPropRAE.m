@@ -112,6 +112,14 @@ else
         Tree.nodeScores(sl+j) = J_min;
         Tree.pp(collapsed_sentence(J_minpos)) = sl+j;
         Tree.pp(collapsed_sentence(J_minpos+1)) = sl+j;
+        
+%         global bKnownParses;
+%         if(bKnownParses)
+%             Tree.kids(sl+j,:) = allKids(j,:);
+%         else
+%             Tree.kids(sl+j,:) = [collapsed_sentence(J_minpos) collapsed_sentence(J_minpos+1)];
+%         end
+        
         Tree.kids(sl+j,:) = [collapsed_sentence(J_minpos) collapsed_sentence(J_minpos+1)];
         Tree.numkids(sl+j) = Tree.numkids(Tree.kids(sl+j,1)) + Tree.numkids(Tree.kids(sl+j,2));
         

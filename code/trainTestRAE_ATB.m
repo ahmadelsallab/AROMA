@@ -59,6 +59,10 @@ if ~exist(preProFile,'file')
     read_rtPolarity_ATB
 else
     load(preProFile, 'labels','train_ind','test_ind', 'cv_ind','We2','allSNum','test_nums');
+    %global bKnownParses;
+    %if(bKnownParses)
+    %    load(preProFile, 'allKids');
+    %end
 end
 sent_freq = ones(length(allSNum),1);
 [~,dictionary_length] = size(We2);

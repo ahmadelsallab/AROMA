@@ -14,7 +14,7 @@ txtFileName = '..\..\Datasets\Qalb\Qalb compiled.txt';
     words = {};
     num = 1;
     allSStr = {};
-    nSentences = 10000;
+    nSentences = 100;
     % Load the positive and negative instances
     % Save in the positive and negative separate txt files
     % Save positive and negative cell arrays

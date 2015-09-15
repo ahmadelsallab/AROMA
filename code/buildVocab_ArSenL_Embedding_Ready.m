@@ -3,6 +3,7 @@ function [words, allSStr, allSNum] = buildVocab_ArSenL_Embedding_Ready(txtFileNa
     % Open the file in UTF-8
     fid = fopen(txtFileName,'r','n','UTF-8');
     labels = csvread(annotationsFileName);
+    delimiter = 'tab';    
     indices = csvread(indicesFileName);
     
     file_pos = '../data/ATB_ArSenL_Embedding/rt-polarity.pos';

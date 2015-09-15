@@ -16,7 +16,7 @@ addpath(genpath('tools/'))
 params.trainModel = 1;
 
 % node and word size
-load('../data/ATB_ArSenL_Embedding/final_net.mat');
+load('../data/ATB_ArSenL_Embedding/final_net_ArSenL_embedding.mat');
 We = NM_strNetParams.cWeights{1};
 params.embedding_size = size(We, 2);
 
@@ -36,6 +36,7 @@ func_prime = @norm1tanh_prime;
 options.Method = 'lbfgs';
 options.display = 'on';
 options.maxIter = 90;
+global CONFIG_strParamsGUI;
 if(~isempty(CONFIG_strParamsGUI))
     params.embedding_size = CONFIG_strParamsGUI.nMaxIter;
 end

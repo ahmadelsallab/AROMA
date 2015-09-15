@@ -22,7 +22,7 @@ function varargout = RAE_GUI_Config(varargin)
 
 % Edit the above text to modify the response to help RAE_GUI_Config
 
-% Last Modified by GUIDE v2.5 10-Sep-2015 16:31:27
+% Last Modified by GUIDE v2.5 10-Sep-2015 18:06:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -290,7 +290,62 @@ function run_RAE_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+    fprintf(1, 'Configuring...\n');
 
+    % Start Configuration
+    CONFIG_setConfigParams(handles);
+
+    fprintf(1, 'Configuration done successfuly\n');
+    
+    % Change directory to go there
+    global CONFIG_strParamsGUI;
+    cd(CONFIG_strParamsGUI.sDefaultClassifierPath);
+
+    % Call main entry function of the classifier
+    %MAIN_trainAndClassify(CONFIG_strParamsGUI);
+    
+    % Decide which experiment to run
+    
+    % Raw experiment
+    if(CONFIG_strParamsGUI.bWordEmbedding == 0)
+        run_ATB;
+    % Separate words embedding
+    elseif (CONFIG_strParamsGUI.bNgramValidWe == 1)
+        run_ATB_We; % run_Qalb_ATB.m
+    % Lexicon embeddings    
+    elseif (CONFIG_strParamsGUI.bLexiconEmbedding == 1)
+        run_ArSenL_Embedding;
+        
+    % Merge of lexicon and word embeddings
+    elseif (CONFIG_strParamsGUI.bMergeLexiconNgram == 1)
+        switch(CONFIG_strParamsGUI.sMergeOption)
+            case 'Features level'
+                run_ArSenL_We;
+            case 'Decision level'
+                %%%%%%%%%%%%%%%%%%%%%%%%% RAE TRAINING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                %%%%%%%%%%%%%%%%%%%%%%%%% ArSenL EMBEDDING TRAINING %%%%%%%%%%%%%%%%%%%%
+                cd([RAEPath '\code\']);
+                run_ArSenL_Embedding;
+                training_instances_ArSenL_Embedding = training_instances;
+                testing_instances_ArSenL_Embedding = testing_instances;
+                save('..\..\..\..\OMA\Code\RAE\data\ATB_ArSenL_Embedding', 'training_instances_ArSenL_Embedding', 'testing_instances_ArSenL_Embedding', 'training_labels', 'testing_labels');
+
+                %%%%%%%%%%%%%%%%%%%%%%%%% Word EMBEDDING TRAINING %%%%%%%%%%%%%%%%%%%%
+                RAEPath = '..\..\..\..\OMA\Code\RAE\';
+                cd([RAEPath '\code\']);
+                run_ATB_We;
+                training_instances_We = training_instances;
+                testing_instances_We = testing_instances;
+                save('..\..\..\..\OMA\Code\RAE\data\ATB_We', 'training_instances_We', 'testing_instances_We', 'training_labels', 'testing_labels');
+
+                %%%%%%%%%%%%%%%%%%%%%%%%% Softmax %%%%%%%%%%%%%%%%%%%%
+                load('..\..\..\..\OMA\Code\RAE\data\ATB_ArSenL_Embedding', 'training_instances_ArSenL_Embedding', 'testing_instances_ArSenL_Embedding', 'training_labels', 'testing_labels');
+                load('..\..\..\..\OMA\Code\RAE\data\ATB_We', 'training_instances_We', 'testing_instances_We');
+                softmax_Decision_Level;                
+        end
+    end
+    
 % --- Executes during object creation, after setting all properties.
 function nMaxIter_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to nMaxIter (see GCBO)
@@ -446,3 +501,130 @@ function pushbutton27_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
     [FileName,PathName] = uigetfile('*','Select the parse trees file');
     set(handles.sParseFilePath, 'String', [PathName FileName]);
+
+
+% --- Executes on button press in run_Embedding.
+function run_Embedding_Callback(hObject, eventdata, handles)
+% hObject    handle to run_Embedding (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    fprintf(1, 'Configuring...\n');
+
+    % Start Configuration
+    CONFIG_setConfigParams(handles);
+
+    fprintf(1, 'Configuration done successfuly\n');
+    
+    % Change directory to go there
+    global CONFIG_strParamsGUI;
+    cd(CONFIG_strParamsGUI.sDefaultClassifierPath);
+
+    % Call main entry function of the classifier
+    %MAIN_trainAndClassify(CONFIG_strParamsGUI);
+    
+    % Decide which experiment to run
+    
+    % Raw experiment
+    if(CONFIG_strParamsGUI.bWordEmbedding == 0)
+        
+    % Separate words embedding
+    elseif (CONFIG_strParamsGUI.bNgramValidWe == 1)
+        clear, clc, close all;
+
+
+        DBNPath = '..\..\..\..\Code\sentimentanalysis\classifiers\Configurations\';
+        RAEPath = '..\';
+
+        %%%%%%%%%%%%%%%%%%%%%%%%% EMBEDDING TRAINING %%%%%%%%%%%%%%%%%%%%%%%%%%%
+        cd(DBNPath);
+        run_We;
+        DBNPath = '..\..\..\..\Code\sentimentanalysis\classifiers\Configurations\';
+        RAEPath = '..\..\..\..\OMA\Code\RAE\';
+        cd(DBNPath);
+
+        copyfile(['vocab_We.mat'], [RAEPath '\data\ATB_We\']);
+        copyfile(['final_net_We.mat'], [RAEPath '\data\ATB_We\']);
+        copyfile(['input_data_We_2.mat'], [RAEPath '\data\ATB_We\']);
+    
+    % Lexicon embeddings    
+    elseif (CONFIG_strParamsGUI.bLexiconEmbedding == 1)
+        %full_training_ArSenL_Embedding;
+        clear, clc, close all;
+
+
+        DBNPath = '..\..\..\..\Code\sentimentanalysis\classifiers\Configurations\';
+        RAEPath = '..\';
+
+        %%%%%%%%%%%%%%%%%%%%%%%%% EMBEDDING TRAINING %%%%%%%%%%%%%%%%%%%%%%%%%%%
+        cd(DBNPath);
+        run_ArSenL_Embedding;
+        DBNPath = '..\..\..\..\Code\sentimentanalysis\classifiers\Configurations\';
+        RAEPath = '..\..\..\..\OMA\Code\RAE\';
+        cd(DBNPath);
+
+        copyfile(['vocab_ArSenL_Embedding.mat'], [RAEPath '\data\ATB_ArSenL_Embedding']);
+        copyfile(['final_net_ArSenL_embedding.mat'], [RAEPath '\data\ATB_ArSenL_Embedding']);
+        copyfile(['input_data_ArSenL_Embedding_1.mat'], [RAEPath '\data\ATB_ArSenL_Embedding']);
+
+        %%%%%%%%%%%%%%%%%%%%%%%%% RAE TRAINING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        cd([RAEPath '\code\']);
+        
+    % Merge of lexicon and word embeddings
+    elseif (CONFIG_strParamsGUI.bMergeLexiconNgram == 1)
+        switch(CONFIG_strParamsGUI.sMergeOption)
+            case 'Features level'
+                %full_training_ArsenL_We;
+                clear, clc, close all;
+
+
+                DBNPath = '..\..\..\..\Code\sentimentanalysis\classifiers\Configurations\';
+                RAEPath = '..\';
+
+                %%%%%%%%%%%%%%%%%%%%%%%%% EMBEDDING TRAINING %%%%%%%%%%%%%%%%%%%%%%%%%%%
+                cd(DBNPath);
+                run_ArSenL_We;
+                DBNPath = '..\..\..\..\Code\sentimentanalysis\classifiers\Configurations\';
+                RAEPath = '..\..\..\..\OMA\Code\RAE\';
+                cd(DBNPath);
+
+                copyfile(['vocab_ArSenL_Embedding.mat'], [RAEPath '\data\ATB_ArSenL_We\']);
+                copyfile(['final_net_We.mat'], [RAEPath '\data\ATB_ArSenL_We\']);
+                copyfile(['final_net_ArSenL_embedding.mat'], [RAEPath '\data\ATB_ArSenL_We\']);
+                copyfile(['input_data_ArSenL_Embedding_1.mat'], [RAEPath '\data\ATB_ArSenL_We\']);
+
+                %%%%%%%%%%%%%%%%%%%%%%%%% RAE TRAINING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                cd([RAEPath '\code\']);
+                
+            case 'Decision level'
+                %full_training_ArsenL_We_Decision_Level_Merge_Softmax;   
+                clear, clc, close all;
+
+
+                DBNPath = '..\..\..\..\Code\sentimentanalysis\classifiers\Configurations\';
+                RAEPath = '..\';
+
+                %%%%%%%%%%%%%%%%%%%%%%%%% EMBEDDING TRAINING %%%%%%%%%%%%%%%%%%%%%%%%%%%
+                cd(DBNPath);
+                % Set bReadyVocab = 0; inside run_ArSenL_We-->run_We 
+                % so that the word embedding training is done without ArSenL lexicon
+                run_ArSenL_We;
+                DBNPath = '..\..\..\..\Code\sentimentanalysis\classifiers\Configurations\';
+                RAEPath = '..\..\..\..\OMA\Code\RAE\';
+                cd(DBNPath);
+
+                % The output files are generated in the folder ATB_ArSenL_We
+                % we have to move them to the folders ATB_ArSenL_Embedding and
+                % ATB_ArSenL_We and rename them.
+                copyfile(['vocab_ArSenL_Embedding.mat'], [RAEPath '\data\ATB_ArSenL_Embedding\']);
+                copyfile(['vocab_We.mat'], [RAEPath '\data\ATB_We\']);
+                %movefile([RAEPath '\data\ATB_We\vocab_ArSenL_Embedding.mat'], [RAEPath '\data\ATB_We\vocab_We.mat']);
+                copyfile(['final_net_We.mat'], [RAEPath '\data\ATB_We\']);
+                movefile([RAEPath '\data\ATB_We\final_net_We.mat'], [RAEPath '\data\ATB_We\final_net.mat']);
+                copyfile(['final_net_ArSenL_embedding.mat'], [RAEPath '\data\ATB_ArSenL_Embedding\']);
+                movefile([RAEPath '\data\ATB_ArSenL_Embedding\final_net_ArSenL_embedding.mat'], [RAEPath '\data\ATB_ArSenL_Embedding\final_net.mat']);
+                copyfile(['input_data_ArSenL_Embedding_1.mat'], [RAEPath '\data\ATB_ArSenL_Embedding\']);
+                copyfile(['input_data_We_2.mat'], [RAEPath '\data\ATB_We\']);
+
+        end
+    end
+    

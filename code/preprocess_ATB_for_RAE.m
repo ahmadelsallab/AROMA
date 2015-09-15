@@ -6,6 +6,7 @@ clear, clc;
 %txtFileName = '..\..\Datasets\ArSenL\corpus lemmas.txt';
 txtFileName = '..\..\Datasets\ATB\punctuations_handled\ATB (preprocessed tokens).txt';
 annotationsFileName = '..\..\Datasets\ArSenL\annotation_sentiment.txt';
+knownParseFileName = '..\..\Datasets\ATB\stanford parser\ATB (indices).txt';
 global CONFIG_strParamsGUI;
 if(~isempty(CONFIG_strParamsGUI))
     txtFileName = CONFIG_strParamsGUI.sSupervisedDataSetPath;
@@ -32,6 +33,11 @@ allSStr_neg = {};
 num = 1;
 num_pos = 1;
 num_neg = 1;
+
+%global bKnownParses;
+%if(bKnownParses)
+%    allKids = readParseTrees(knownParseFileName);
+%end
 
 % Load the positive and negative instances
 % Save in the positive and negative separate txt files
@@ -100,7 +106,7 @@ for lineIdx = 1 : size(allSStr, 2)
     allSNum{lineIdx} = lineWordsIndices;
 end
 % Save the positive workspace
-save([dirName '\rt-polarity_neg_binarized.mat'],'allSNum','allSStr');
+save([dirName '\rt-polarity_neg_binarized.mat'],'allSNum','allSStr', 'allKids');
 
 save ([dirName '\preprocess.mat']);
 

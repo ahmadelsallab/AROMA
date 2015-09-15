@@ -19,9 +19,18 @@ lambda(4) = lambda2(3);
 
 % disp('DEBUGGING: DELETE AFTERWARDS')
 % data_cell=data_cell(1:2);
-
-[costRAE, gradRAE, allKids] = computeCostAndGradRAE([], theta1, 0, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
-    (alpha_cat)*lambda, We_orig , data_cell, labels, freq_orig, f, f_prime, 0);
+    [costRAE, gradRAE, allKids] = computeCostAndGradRAE([], theta1, 0, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
+        (alpha_cat)*lambda, We_orig , data_cell, labels, freq_orig, f, f_prime, 0);
+% global bKnownParses;
+% if(bKnownParses)
+%     load('../data/ATB/RTData_CV_1.mat', 'allKids');
+%     [costRAE, gradRAE, allKids] = computeCostAndGradRAE(allKids, theta1, 0, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
+%         (alpha_cat)*lambda, We_orig , data_cell, labels, freq_orig, f, f_prime, 0);
+% 
+% else
+%     [costRAE, gradRAE, allKids] = computeCostAndGradRAE([], theta1, 0, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
+%         (alpha_cat)*lambda, We_orig , data_cell, labels, freq_orig, f, f_prime, 0);
+% end
 
 
 WegradRAE = gradRAE(end-szWe+1:end);
