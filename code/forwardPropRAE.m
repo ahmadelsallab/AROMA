@@ -96,6 +96,19 @@ else
         J = 1/2*sum((y1c1).*(y1-c1) + (y2c2).*(y2-c2));
         
         % finding the pair with smallest reconstruction error for constructing tree
+        global bKnownParses;
+         if(bKnownParses)
+            % The min. position are already known from the parser
+             J_minpos = allKids(j,1);
+             %J_minpos_2 = allKids(j,2);
+             J_minpos_2 = J_minpos + 1;
+            % The min. score is at the min. position from the parser.
+            % Note that; the two positions from the parser are guaranteed to be always successive as in case of the greedy RAE algorihtm.
+            % So always, J_minpos_2 = J_minpos + 1
+             J_min = J(J_minpos);
+         else
+             [J_min J_minpos] = min(J);
+         end
         [J_min J_minpos] = min(J);
 %          J_minpos = 1;
 %          J_min = J(1);
@@ -113,23 +126,35 @@ else
         Tree.pp(collapsed_sentence(J_minpos)) = sl+j;
         Tree.pp(collapsed_sentence(J_minpos+1)) = sl+j;
         
-%         global bKnownParses;
-%         if(bKnownParses)
-%             Tree.kids(sl+j,:) = allKids(j,:);
-%         else
-%             Tree.kids(sl+j,:) = [collapsed_sentence(J_minpos) collapsed_sentence(J_minpos+1)];
-%         end
+         global bKnownParses;
+         if(bKnownParses)
+             Tree.kids(sl+j,:) = [collapsed_sentence(J_minpos) collapsed_sentence(J_minpos_2)];
+         else
+             Tree.kids(sl+j,:) = [collapsed_sentence(J_minpos) collapsed_sentence(J_minpos+1)];
+         end
         
-        Tree.kids(sl+j,:) = [collapsed_sentence(J_minpos) collapsed_sentence(J_minpos+1)];
+        %Tree.kids(sl+j,:) = [collapsed_sentence(J_minpos) collapsed_sentence(J_minpos+1)];
         Tree.numkids(sl+j) = Tree.numkids(Tree.kids(sl+j,1)) + Tree.numkids(Tree.kids(sl+j,2));
+        % freq(J_minpos+1) = [];
+        % freq(J_minpos) = (Tree.numkids(Tree.kids(sl+j,1))*freq1(J_minpos) + Tree.numkids(Tree.kids(sl+j,2))*freq2(J_minpos))/(Tree.numkids(Tree.kids(sl+j,1))+Tree.numkids(Tree.kids(sl+j,2)));
         
-        
-        freq(J_minpos+1) = [];
-        freq(J_minpos) = (Tree.numkids(Tree.kids(sl+j,1))*freq1(J_minpos) + Tree.numkids(Tree.kids(sl+j,2))*freq2(J_minpos))/(Tree.numkids(Tree.kids(sl+j,1))+Tree.numkids(Tree.kids(sl+j,2)));
-        
-        collapsed_sentence(J_minpos+1)=[];
-        collapsed_sentence(J_minpos)=sl+j;
-        
+        % collapsed_sentence(J_minpos+1)=[];
+        % collapsed_sentence(J_minpos)=sl+j;       
+       global bKnownParses;
+       if(bKnownParses)
+             freq(J_minpos_2) = [];
+             freq(J_minpos) = (Tree.numkids(Tree.kids(sl+j,1))*freq1(J_minpos) + Tree.numkids(Tree.kids(sl+j,2))*freq2(J_minpos))/(Tree.numkids(Tree.kids(sl+j,1))+Tree.numkids(Tree.kids(sl+j,2)));
+            
+             collapsed_sentence(J_minpos_2)=[];
+             collapsed_sentence(J_minpos)=sl+j;
+
+       else
+             freq(J_minpos+1) = [];
+             freq(J_minpos) = (Tree.numkids(Tree.kids(sl+j,1))*freq1(J_minpos) + Tree.numkids(Tree.kids(sl+j,2))*freq2(J_minpos))/(Tree.numkids(Tree.kids(sl+j,1))+Tree.numkids(Tree.kids(sl+j,2)));
+            
+             collapsed_sentence(J_minpos+1)=[];
+             collapsed_sentence(J_minpos)=sl+j;
+        end
     end
 end
 end

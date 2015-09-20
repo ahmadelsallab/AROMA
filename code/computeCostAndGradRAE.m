@@ -51,13 +51,13 @@ parfor ii = range;
             num_nodes = num_nodes + 1;
             
         else
-%             global bKnownParses;
-%             if(bKnownParses)
-%                 Tree = forwardPropRAE(allKids{ii}, W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
-%             else
-%                 Tree = forwardPropRAE([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
-%             end
-              Tree = forwardPropRAE([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
+             global bKnownParses;
+             if(bKnownParses)
+                 Tree = forwardPropRAE(allKids{ii}, W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
+             else
+                 Tree = forwardPropRAE([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
+             end
+              % Tree = forwardPropRAE([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
             if(we == 0)            
                 allKids{ii} = Tree.kids;
             end

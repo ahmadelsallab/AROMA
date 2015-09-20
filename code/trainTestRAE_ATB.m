@@ -59,10 +59,10 @@ if ~exist(preProFile,'file')
     read_rtPolarity_ATB
 else
     load(preProFile, 'labels','train_ind','test_ind', 'cv_ind','We2','allSNum','test_nums');
-    %global bKnownParses;
-    %if(bKnownParses)
-    %    load(preProFile, 'allKids');
-    %end
+    global bKnownParses;
+    if(bKnownParses)
+        load(preProFile, 'allKids');
+    end
 end
 sent_freq = ones(length(allSNum),1);
 [~,dictionary_length] = size(We2);
@@ -117,7 +117,7 @@ if params.trainModel
     sent_freq_We = sent_freq;
         
     [opttheta, cost] = minFunc( @(p)RAECost(p, params.alpha_cat, cat_size,params.beta, dictionary_length, params.embedding_size, ...
-        params.lambda, We2, snum, lbl, freq_train, sent_freq, func, func_prime), ...
+        params.lambda, We2, snum, lbl, freq_train, sent_freq, func, func_prime, allKids), ...
         theta, options);
     theta = opttheta;
     
@@ -130,8 +130,10 @@ else
     if params.CVNUM ~= 1
         error('This is the optimal file for CV-fold 1')
     end
-    load('../output/ATB/optParams_RT_CV1.mat')
-    params.embedding_size = params.wordSize;
+    %load('../output/ATB/optParams_RT_CV1.mat')
+    load('../output/ATB/savedParams_CV1.mat')
+    %params.embedding_size = params.wordSize;
+    params.embedding_size = 50;
     params.alpha_cat = 0.2;
     params.trainModel = 0;
     classifyWithRAE_ATB

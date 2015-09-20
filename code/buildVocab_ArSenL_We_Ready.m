@@ -33,8 +33,12 @@ function [words, allSStr, allSNum] = buildVocab_ArSenL_We_Ready(txtFileName, ind
         line = strtrim(line);
         % Get the words of each line
         %lineWords = textscan(line,'%s','delimiter',' ');
+        
+        % CSV files lines end with 0
         non_zero = find(indices(num,:) == 0);
         non_zero = non_zero(1);
+        % Indices are zero based, while embedding lookup table is 1 based,
+        % so we add 1 here
         line_indices = indices(num, 1 : non_zero - 1);
         if(labels(num) == 1)
             fprintf(fid_pos, [line '\n']);

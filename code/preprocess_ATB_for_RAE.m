@@ -34,10 +34,10 @@ num = 1;
 num_pos = 1;
 num_neg = 1;
 
-%global bKnownParses;
-%if(bKnownParses)
-%    allKids = readParseTrees(knownParseFileName);
-%end
+global bKnownParses;
+if(bKnownParses)
+    allKids = readTreeParses(knownParseFileName);
+end
 
 % Load the positive and negative instances
 % Save in the positive and negative separate txt files

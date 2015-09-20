@@ -3,7 +3,6 @@ function [words, allSStr, allSNum] = buildVocab_ArSenL_Embedding_Ready(txtFileNa
     % Open the file in UTF-8
     fid = fopen(txtFileName,'r','n','UTF-8');
     labels = csvread(annotationsFileName);
-    delimiter = 'tab';    
     indices = csvread(indicesFileName);
     
     file_pos = '../data/ATB_ArSenL_Embedding/rt-polarity.pos';
@@ -42,9 +41,14 @@ function [words, allSStr, allSNum] = buildVocab_ArSenL_Embedding_Ready(txtFileNa
         line = strtrim(line);
         % Get the words of each line
         %lineWords = textscan(line,'%s','delimiter',' ');
+        
+        % CSV files lines end with 0
         non_zero = find(indices(num,:) == 0);
         non_zero = non_zero(1);
-        line_indices = indices(num, 1 : non_zero - 1);
+        % Indices are zero based, while embedding lookup table is 1 based,
+        % so we add 1 here
+        line_indices = indices(num, 1 : non_zero - 1) + 1;
+        %line_indices = indices(num, 1 : non_zero - 1);
         if(labels(num) == 1)
             fprintf(fid_pos, [line '\n']);
             lineWords = splitLine(line);
