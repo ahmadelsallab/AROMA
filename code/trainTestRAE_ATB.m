@@ -37,7 +37,7 @@ func_prime = @norm1tanh_prime;
 % parameters for the optimizer
 options.Method = 'lbfgs';
 options.display = 'on';
-options.maxIter = 120;
+options.maxIter = 90;
 if(~isempty(CONFIG_strParamsGUI))
     params.embedding_size = CONFIG_strParamsGUI.nMaxIter;
 end

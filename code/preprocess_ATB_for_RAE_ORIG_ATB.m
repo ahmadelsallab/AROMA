@@ -87,18 +87,20 @@ while line > 0
         num_neg = num_neg + 1;
         words = [words; lineWords];
     end
-    num = num + 1;
-    line = fgets(fid);
     %%% NEW
     fprintf(fid_all, [line '\n']);
     allSStr{num} = lineWords';
-    allSNum{num} = line_indices;
+    %allSNum{num} = line_indices;
     %%%
+    num = num + 1;
+    line = fgets(fid);
+
 
 end
 %%% NEW
+allSStr_ORIG = allSStr;
 labels = labels';
-save([dirName '\rt-polarity_binarized.mat','allSNum','allSStr', 'labels']);%%%
+%save([dirNamex '\rt-polarity_binarized.mat'],'allSNum','allSStr', 'labels');%%%
 %%%%
 
 % Print the vocab.txt file
@@ -143,6 +145,26 @@ for lineIdx = 1 : size(allSStr, 2)
 end
 % Save the positive workspace
 save([dirName '\rt-polarity_neg_binarized.mat'],'allSNum','allSStr', 'allKids_neg');
+
+%%% NEW
+% All workspace
+allSStr = allSStr_ORIG;
+allSNum = {};
+for lineIdx = 1 : size(allSStr, 2)
+    lineWordsIndices = [];
+    for wordIdx = 1 : size(allSStr{lineIdx}, 2)
+        lineWordsIndices(wordIdx) = wordMap(allSStr{lineIdx}{wordIdx});
+    end
+    allSNum{lineIdx} = lineWordsIndices;
+end
+% Save the all workspace
+global bKnownParses;
+if(bKnownParses)
+    save([dirName '\rt-polarity_binarized.mat'],'allSNum','allSStr', 'allKids', 'labels');
+else
+    save([dirName '\rt-polarity_binarized.mat'],'allSNum','allSStr', 'labels');
+end
+%%%
 
 save ([dirName '\preprocess.mat']);
 
