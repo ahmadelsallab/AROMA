@@ -1,47 +1,45 @@
 
 %load('../data/rt-polaritydata/vocab.mat','words')
-load('../data/ATB/vocab.mat','words')
+load('../data/ATB_ArSenL_Embedding/vocab_ArSenL_Embedding.mat','words')
 
 useTrees = 0;
 
 % randomly initialize We
 %sizeWe = [50  268810];
-sizeWe = [50  length(words)];
-r  = 0.05;   % we'll choose weights uniformly from the interval [-r, r]
-We = rand(sizeWe) * 2 * r - r;
+%sizeWe = [50  length(words)];
+%r  = 0.05;   % we'll choose weights uniformly from the interval [-r, r]
+%We = rand(sizeWe) * 2 * r - r;
+load('../data/ATB_ArSenL_Embedding/final_net_ArSenL_embedding.mat');
+We = NM_strNetParams.cWeights{1};
+We = We';
+sizeWe = size(We);
 
 
 %file1 = '../data/rt-polaritydata/rt-polarity.pos';
-file1 = '../data/ATB/rt-polarity.pos';
+file1 = '../data/ATB_ArSenL_Embedding/rt-polarity.pos';
 fid1 = fopen(file1);
 
 %file2 = '../data/rt-polaritydata/rt-polarity.neg';
-file2 = '../data/ATB/rt-polarity.neg';
+file2 = '../data/ATB_ArSenL_Embedding/rt-polarity.neg';
 fid2 = fopen(file2);
+%%% NEW
+file = '../data/ATB_ArSenL_Embedding/rt-polarity.all';
+fid = fopen(file);
+%%%
 
 % these files also contain parse trees which we do not help in our experiments
 %load('../data/rt-polaritydata/rt-polarity_pos_binarized.mat','allSNum','allSStr');
-load('../data/ATB/rt-polarity_pos_binarized.mat','allSNum','allSStr');
+load('../data/ATB_ArSenL_Embedding/rt-polarity_pos_binarized.mat','allSNum','allSStr');
 allSNum_pos = allSNum;
 allSStr_pos = allSStr;
 
 %load('../data/rt-polaritydata/rt-polarity_neg_binarized.mat','allSNum','allSStr');
-load('../data/ATB/rt-polarity_neg_binarized.mat','allSNum','allSStr');
+load('../data/ATB_ArSenL_Embedding/rt-polarity_neg_binarized.mat','allSNum','allSStr');
 allSNum = [allSNum_pos allSNum];
 allSStr = [allSStr_pos allSStr];
-
 clear allSNum_pos;
 clear allSStr_pos;
 
-global bKnownParses;
-if(bKnownParses)
-    load('../data/ATB/rt-polarity_pos_binarized.mat','allKids_pos');
-    load('../data/ATB/rt-polarity_neg_binarized.mat','allKids_neg');
-    allKids = [allKids_pos allKids_neg];
-    clear allKids_pos;
-    clear allKids_neg;
-
-end
 
 % %  Upon inspection these need manual editing:
 % allSStr{5919} = {'obvious'};
@@ -60,34 +58,54 @@ tic
 labels = zeros(1,10^6);
 sentence_words = cell(1,10^5);
 counter = 0;
-while ~feof(fid1)
-    
-    tempstr = fgetl(fid1);
-    while strcmp(tempstr(end),' ')||strcmp(tempstr(end),'.')
-        tempstr(end) = [];
-    end
-    counter = counter + 1;
-    sentence_words{counter} = regexp(tempstr,' ','split');
-    labels(counter) = 1;
-end
 
-while ~feof(fid2)
+%%% NEW
+% while ~feof(fid1)
     
-    tempstr = fgetl(fid2);
-    while strcmp(tempstr(end),' ')||strcmp(tempstr(end),'.')
-        tempstr(end) = [];
-    end
-    counter = counter + 1;
-    sentence_words{counter} = regexp(tempstr,' ','split');
-    labels(counter) = 0;
+    % tempstr = fgetl(fid1);
+    % while strcmp(tempstr(end),' ')||strcmp(tempstr(end),'.')
+        % tempstr(end) = [];
+    % end
+    % counter = counter + 1;
+    % sentence_words{counter} = regexp(tempstr,' ','split');
+    % labels(counter) = 1;
+% end
+
+% while ~feof(fid2)
     
-end
+    % tempstr = fgetl(fid2);
+    % while strcmp(tempstr(end),' ')||strcmp(tempstr(end),'.')
+        % tempstr(end) = [];
+    % end
+    % counter = counter + 1;
+    % sentence_words{counter} = regexp(tempstr,' ','split');
+    % labels(counter) = 0;
+    
+% end
+
+ 
+ while ~feof(fid)
+     
+     tempstr = fgetl(fid);
+     while strcmp(tempstr(end),' ')||strcmp(tempstr(end),'.')
+         tempstr(end) = [];
+     end
+     counter = counter + 1;
+     sentence_words{counter} = regexp(tempstr,' ','split');
+     labels(counter) = 1;
+ end
+%%%
 sentence_words(counter+1:end) = [];
 labels(counter+1:end) = [];
 toc
 
 num_examples = counter;
 wordMap = containers.Map(words,1:length(words));
+
+%%% NEW
+% load('../data/ATB_ArSenL_Embedding/rt-polarity_binarized.mat','allSNum','allSStr', 'labels');
+load('../data/ATB/rt-polarity_binarized.mat','allSNum','allSStr', 'labels');
+%%%
 
 % wordMap('elipsiseelliippssiiss') = wordMap('...');
 % wordMap('smilessmmiillee') = (uint32(wordMap.Count) + 1);   %end-4
@@ -147,30 +165,40 @@ parfor i=1:num_examples
     words_reIndexed{i} = arrayfun(@(x) reIndexMap(x), words_indexed{i});
 end
 
-We2 = We(:, unq);
+%We2 = We(:, unq);
+We2 = We;
 
 cv_obj = cvpartition(labels,'kfold',10);
-save('../data/ATB/cv_obj','cv_obj');
+save('../data/ATB_ArSenL_Embedding/cv_obj','cv_obj');
 %load('../data/ATB/cv_obj');
-full_train_ind = cv_obj.training(params.CVNUM);
-full_train_nums = find(full_train_ind);
-test_ind = cv_obj.test(params.CVNUM);
-test_nums = find(test_ind);
+%full_train_ind = cv_obj.training(params.CVNUM);
+%full_train_nums = find(full_train_ind);
+
+%%% NEW
+ full_train_ind = zeros(1180, 1);
+ full_train_ind(237:end) = 1;
+ full_train_ind = logical(full_train_ind);
+ full_train_nums = find(full_train_ind);
+%%%
+
+%test_ind = cv_obj.test(params.CVNUM);
+%test_nums = find(test_ind);
+
+%%% NEW
+ test_ind = zeros(1180, 1);
+ test_ind(1:236) = 1;
+ test_ind = logical(test_ind);
+ test_nums = find(test_ind);
+%%%
+
 
 train_ind = full_train_ind;
 cv_ind = test_ind;
 
 allSNum = words_reIndexed;
 
-clear sentence_words_temp
+%clear sentence_words_temp
 
 isnonZero = ones(1,length(allSNum));
 
-
-
-global bKnownParses;
-if(bKnownParses)
-    save(preProFile, 'labels', 'words_reIndexed', 'full_train_ind','train_ind','cv_ind','test_ind','We2','allSNum', 'allKids','unq','isnonZero','test_nums','full_train_nums', 'allKids');
-else
-    save(preProFile, 'labels', 'words_reIndexed', 'full_train_ind','train_ind','cv_ind','test_ind','We2','allSNum','unq','isnonZero','test_nums','full_train_nums');
-end
+save(preProFile, 'labels', 'words_reIndexed', 'full_train_ind','train_ind','cv_ind','test_ind','We2','allSNum','unq','isnonZero','test_nums','full_train_nums');

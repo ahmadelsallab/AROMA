@@ -56,7 +56,7 @@ preProFile = ['../data/ATB/RTData_CV' num2str(params.CVNUM) '.mat'];
 
 % read in polarity dataset
 if ~exist(preProFile,'file')
-    read_rtPolarity_ATB
+    read_rtPolarity_ATB_ORIG_ATB
 else
     global bKnownParses;
     if(bKnownParses)
@@ -109,10 +109,6 @@ end
 %%%%%%%%%%%%%%%%%%%%%%
 % Train/Test Model
 %%%%%%%%%%%%%%%%%%%%%%
-% Start parses file
-file_parse = '..\data\parses.txt';
-fid_parse = fopen(file_parse, 'w', 'n', 'UTF-8');
-fclose(fid_parse);
 if params.trainModel
     lbl = labels(:,train_ind);
     snum = allSNum(train_ind);

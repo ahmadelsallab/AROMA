@@ -4,9 +4,9 @@ clear, clc;
 %txtFileName = '..\..\Datasets\ATB\input\ATB1v3_UTF8.txt';%..\..\Datasets\ArSenL\corpus lemmas.txt
 %annotationsFileName = '..\..\Datasets\ATB\annotations.txt';%..\..\Datasets\ArSenL\annotation_sentiment.txt
 %txtFileName = '..\..\Datasets\ArSenL\corpus lemmas.txt';
-txtFileName = '..\..\Datasets\ATB\punctuations_handled\ATB (preprocessed tokens).txt';
+txtFileName = '..\..\Datasets\ATB\punctuations_handled\ATB (preprocessed).txt';
 annotationsFileName = '..\..\Datasets\ArSenL\annotation_sentiment.txt';
-knownParseFileName = '..\..\Datasets\ATB\stanford parser\token-level\atb (combined nodes indices, tokens).txt';
+knownParseFileName = '..\..\Datasets\ATB\stanford parser\word-level\atb (combined nodes indices, words).txt';
 global CONFIG_strParamsGUI;
 if(~isempty(CONFIG_strParamsGUI))
     txtFileName = CONFIG_strParamsGUI.sSupervisedDataSetPath;
@@ -23,6 +23,9 @@ fid_pos = fopen(file_pos, 'w', 'n', 'UTF-8');
 file_neg = [dirName '\rt-polarity.neg'];
 fid_neg = fopen(file_neg, 'w', 'n', 'UTF-8');
 
+file_all = [dirName '\rt-polarity.all'];
+fid_all = fopen(file_all, 'w', 'n', 'UTF-8');
+
 % Get the sentences line by line
 
 line = fgets(fid);
@@ -32,6 +35,11 @@ allSStr_pos = {};
 allSStr_neg = {};
 allKids_pos = {};
 allKids_neg = {};
+
+%%% NEW
+allSStr = {};
+allSNum = {};
+%%%
 
 num = 1;
 num_pos = 1;
@@ -81,7 +89,17 @@ while line > 0
     end
     num = num + 1;
     line = fgets(fid);
+    %%% NEW
+    fprintf(fid_all, [line '\n']);
+    allSStr{num} = lineWords';
+    allSNum{num} = line_indices;
+    %%%
+
 end
+%%% NEW
+labels = labels';
+save([dirName '\rt-polarity_binarized.mat','allSNum','allSStr', 'labels']);%%%
+%%%%
 
 % Print the vocab.txt file
 fid_vocab = fopen([dirName '\vocab.txt'], 'w', 'n', 'UTF-8');

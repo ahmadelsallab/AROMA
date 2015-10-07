@@ -1,5 +1,6 @@
 function words = splitLine(text)
     % Get spaces positions
+    text = strtrim(text);
     spaces = find(text == ' ');
     
     words = {};

@@ -13,17 +13,21 @@ function allKids = readTreeParses(fileName)
             num = num + 1;
             if(~isempty(lineWords{1}))
                 if(strcmp(lineWords{1}{1}, 'SENTENCE:'))
-                    if(~isempty(Kids))
-                        % Insert previous kids
-                        allKids = [allKids; Kids];
-                        % Start new kids
-                        Kids = [];
-                    end
+                    % Start new kids
+                    Kids = [];
                 else
                     % Append to the current sentence Kids
-                    Kids = [Kids; eval(line)];
-                end            
-            end
+                    % +1 because sentences indices are zero based
+                    Kids = [Kids; eval(line) + 1];
+                end
+            else
+                % Insert previous kids
+                if(~isempty(Kids))
+                    allKids = [allKids; Kids];
+                end   
+            end   
+         else
+         
         end
 
         % Get next line

@@ -10,11 +10,11 @@ disp('Get features by forward propagating and finding structure for all train an
 
 fulltraining_instances = getFeatures(allSNum(train_ind),0,...
     We,We2,W1,W2,W3,W4,b1,b2,b3,Wcat,bcat,params.alpha_cat,params.embedding_size, ...
-    labels(:,train_ind), freq_train, func, func_prime, params.trainModel);
+    labels(:,train_ind), freq_train, func, func_prime, params.trainModel, []);
 
 fulltesting_instances = getFeatures(allSNum(test_ind),0,...
     We,We2,W1,W2,W3,W4,b1,b2,b3,Wcat,bcat,params.alpha_cat,params.embedding_size,...
-    labels(:,test_ind), freq_test, func, func_prime, params.trainModel);
+    labels(:,test_ind), freq_test, func, func_prime, params.trainModel, []);
 
 training_labels = labels(:,train_ind)';
 testing_labels = labels(:,test_ind)';
