@@ -15,8 +15,8 @@ global bKnownParses;
 loc_bKnownParses = bKnownParses;
 
 
-%parfor ii = 1:num_examples;
-for ii = 1:num_examples;
+parfor ii = 1:num_examples;
+%for ii = 1:num_examples;
     words_rI = words_reIndexed{ii};
     nn = length(words_rI);
 

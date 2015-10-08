@@ -13,7 +13,7 @@ addpath(genpath('tools/'))
 % Hyperparameters
 %%%%%%%%%%%%%%%%%%%%%%
 % set this to 1 to train the model and to 0 for just testing the RAE features (and directly training the classifier)
-params.trainModel = 1;
+params.trainModel = 0;
 
 % node and word size
 params.embedding_size = 50;

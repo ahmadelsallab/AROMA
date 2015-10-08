@@ -25,7 +25,12 @@ fid_neg = fopen(file_neg, 'w', 'n', 'UTF-8');
 
 % Get the sentences line by line
 
-line = fgets(fid);
+%line = fgets(fid);
+line = fgetl(fid);
+while strcmp(line(end),' ')||strcmp(line(end),'.')
+    line(end) = [];
+end
+
 %data = {};
 words = {};
 allSStr_pos = {};
@@ -53,10 +58,17 @@ while line > 0
     %lineWords = textscan(line,'%s','delimiter',' ');
     if(labels(num) == 1)
         fprintf(fid_pos, line);
+        fprintf(fid_pos, '\n');
+        
         %lineWords = splitLine(line);
+        
         line=strtrim(line);
         lineWords = textscan(line,'%s','delimiter',' ');
         lineWords = lineWords{1,1};
+        
+        lineWords = regexp(line,' ','split');
+        lineWords = lineWords';
+        
         allSStr_pos{num_pos} = lineWords';
         %allSStr_pos{num_pos} = lineWords;
         global bKnownParses;
@@ -67,10 +79,15 @@ while line > 0
         words = [words; lineWords];
     elseif(labels(num) == 2)
         fprintf(fid_neg, line);
+        fprintf(fid_neg, '\n');
         %lineWords = splitLine(line);
         line=strtrim(line);
         lineWords = textscan(line,'%s','delimiter',' ');
         lineWords = lineWords{1,1};
+        
+        lineWords = regexp(line,' ','split');
+        lineWords = lineWords';
+                
         allSStr_neg{num_neg} = lineWords';
         global bKnownParses;
         if(bKnownParses)
@@ -80,7 +97,12 @@ while line > 0
         words = [words; lineWords];
     end
     num = num + 1;
-    line = fgets(fid);
+    %line = fgets(fid);
+    line = fgetl(fid);
+    while strcmp(line(end),' ')||strcmp(line(end),'.')
+        line(end) = [];
+    end
+
 end
 
 % Print the vocab.txt file

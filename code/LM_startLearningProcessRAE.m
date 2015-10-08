@@ -108,7 +108,7 @@ if params.trainModel
     snum_We = allSNum(train_ind);
     sent_freq_We = sent_freq;
         
-    [opttheta, cost] = minFunc( @(p)RAECost(p, params.alpha_cat, cat_size,params.beta, dictionary_length, params.embedding_size, ...
+    [opttheta, cost] = minFunc( @(p)UNSUP_trainRAE(p, params.alpha_cat, cat_size,params.beta, dictionary_length, params.embedding_size, ...
         params.lambda, We2, snum, lbl, freq_train, sent_freq, func, func_prime), ...
         theta, options);
     theta = opttheta;
@@ -116,7 +116,7 @@ if params.trainModel
     [W1, W2, W3, W4, b1, b2, b3, Wcat,bcat, We] = getW(1, theta, params.embedding_size, cat_size, dictionary_length);
     
     save(['../output/ATB/savedParams_CV' num2str(params.CVNUM) '.mat'],'opttheta','params','options');
-    classifyWithRAE_ATB
+    SUP_trainSoftmaxWithRAE
     
 else
     if params.CVNUM ~= 1
@@ -126,5 +126,5 @@ else
     params.embedding_size = params.wordSize;
     params.alpha_cat = 0.2;
     params.trainModel = 0;
-    classifyWithRAE_ATB
+    SUP_trainSoftmaxWithRAE
 end
