@@ -27,9 +27,9 @@ fid_neg = fopen(file_neg, 'w', 'n', 'UTF-8');
 
 %line = fgets(fid);
 line = fgetl(fid);
-while strcmp(line(end),' ')||strcmp(line(end),'.')
-    line(end) = [];
-end
+% while strcmp(line(end),' ')||strcmp(line(end),'.')
+%     line(end) = [];
+% end
 
 %data = {};
 words = {};
@@ -99,9 +99,9 @@ while line > 0
     num = num + 1;
     %line = fgets(fid);
     line = fgetl(fid);
-    while strcmp(line(end),' ')||strcmp(line(end),'.')
-        line(end) = [];
-    end
+%     while strcmp(line(end),' ')||strcmp(line(end),'.')
+%         line(end) = [];
+%     end
 
 end
 

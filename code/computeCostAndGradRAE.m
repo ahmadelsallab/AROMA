@@ -31,8 +31,8 @@ range = 1:num_examples;
 global bKnownParses;
 local_bKnownParses = bKnownParses;
 
-parfor ii = range;
-%for ii = range;
+%parfor ii = range;
+for ii = range;
     data = data_cell{ii};
     
     words_indexed = data;
@@ -57,10 +57,10 @@ parfor ii = range;
         else
 
              % Start new sentence line
-             file_parse = '..\data\parses.txt';
-             fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
-             fprintf(fid_parse, ['SENTENCE ' num2str(ii) ']\n']);
-             fclose(fid_parse);
+%              file_parse = '..\data\parses.txt';
+%              fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
+%              fprintf(fid_parse, ['SENTENCE ' num2str(ii) ']\n']);
+%              fclose(fid_parse);
              if(local_bKnownParses)
                  Tree = forwardPropRAE(allKids{ii}, W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
              
@@ -70,9 +70,9 @@ parfor ii = range;
              % Tree = forwardPropRAE([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
              
              % Add enter after the sentence
-             fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
-             fprintf(fid_parse, [']\n']);
-             fclose(fid_parse);
+%              fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
+%              fprintf(fid_parse, [']\n']);
+%              fclose(fid_parse);
 
               if(we == 0)            
                 allKids{ii} = Tree.kids;

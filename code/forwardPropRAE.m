@@ -118,10 +118,10 @@ else
 %          J_min = J(1);
         
         % Append to the parse file
-        file_parse = '..\data\parses.txt';
-        fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
-        fprintf(fid_parse, ['[' num2str(J_minpos) ',' num2str(J_minpos+1) ']\n']);
-        fclose(fid_parse);
+        %file_parse = '..\data\parses.txt';
+        %fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
+        %fprintf(fid_parse, ['[' num2str(J_minpos) ',' num2str(J_minpos+1) ']\n']);
+        %fclose(fid_parse);
         
         Tree.node_y1c1(:,sl+j) = y1c1(:,J_minpos);
         Tree.node_y2c2(:,sl+j) = y2c2(:,J_minpos);
