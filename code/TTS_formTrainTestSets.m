@@ -3,62 +3,87 @@
 % split is defined in the inputs
 % Inputs:
 % cData: the input non split data
-% mTargets: Raw targets. Matrix (nxl), where n is the number of examples and l is the number of target classes
-% nTrainToTestFactor: The ratio of splitting train to test sets
+% vTargets: Raw targets. 
+
 % Output:
-% mTestFeatures: Test features. Matrix (nxm), where n is the number of examples and m is the features vector length
-% mTestTargets: Test targetss. Matrix (nxl), where n is the number of examples and l is the number of target classes
-% mTrainFeatures: Train features. Matrix (nxm), where n is the number of examples and m is the features vector length
-% mTrainTargets: Train targets. Matrix (nxl), where n is the number of examples and l is the number of target classes
-function [mTestFeatures, mTestTargets, mTrainFeatures, mTrainTargets] = TTS_formTrainTestSets(cData, vTargets)
+% cTestData: Test features. 
+% vTestTargets: Test targetss.
+% cTrainData: Train features. 
+% vTrainTargets: Train targets. 
+function [cTestData, vTestTargets, mcTrainData, vTrainTargets] = TTS_formTrainTestSets(cData, vTargets)
+    
+    % Load configurations
+    global CONFIG_strParams;
+    sCriteria = CONFIG_strParams.sSplitCriteria;
+    nTrainToTestFactor = CONFIG_strParams.nTrainToTestFactor;
     
     % Initialize the matrices
-    mTestTargets = [];
-    mTestFeatures = [];
-    mTrainTargets = [];
-    mTrainFeatures = [];
+    vTestTargets = [];
+    cTestData = [];
+    vTrainTargets = [];
+    cTrainData = [];
      
     % Randomize if criteria is random
     if strcmp(sCriteria, 'random')
         rand('state',0); %so we know the permutation of the training data
-        randomorder=randperm(size(mFeatures,1));       
+        randomorder=randperm(size(cData,1));       
     end % end if
 
-    for b = 1 : size(mFeatures,1)
+    for b = 1 : size(cData,1)
         fprintf(1, 'Splitting example %d\n', b);
         % Read the raw features and targets according to split criteria
         if strcmp(sCriteria, 'random')
-            mLocFeatures = mFeatures(randomorder(b), :);
-            mLocTargets = mTargets(randomorder(b), :);
+            mLocFeatures = cData(randomorder(b), :);
+            mLocTargets = vTargets(randomorder(b), :);
+            % Feed test and train sets according to the ratio configured
+            if (mod(b-1, nTrainToTestFactor) == 0)	
+                vTestTargets = [vTestTargets; mLocTargets];
+                cTestData = [cTestData; mLocFeatures];
+            else
+                vTrainTargets = [vTrainTargets; mLocTargets];
+                cTrainData = [cTrainData; mLocFeatures];
+            end; % end if-else
         elseif strcmp(sCriteria, 'uniform')
-            mLocFeatures = mFeatures(b, :);
-            mLocTargets = mTargets(b, :);
-        elseif strcmp(sCriteria, 'CrossValidation')
-            cv_obj = cvpartition(mTargets,'kfold',nTrainToTestFactor);
-            save('../data/ATB/cv_obj','cv_obj');
-            %load('../data/ATB/cv_obj');
-            full_train_ind = cv_obj.training(params.CVNUM);
-            full_train_nums = find(full_train_ind);
-            test_ind = cv_obj.test(params.CVNUM);
-            test_nums = find(test_ind);
-
-            train_ind = full_train_ind;
-            cv_ind = test_ind;
+            mLocFeatures = cData(b, :);
+            mLocTargets = vTargets(b, :);
             
-            mTestTargets = mFeatures(test_ind,:);
-            mTestFeatures = mTargets(test_ind,:);
-            mTrainTargets = mTargets(train_ind,:);
-            mTrainFeatures = mFeatures(train_ind,:);
+            % Feed test and train sets according to the ratio configured
+            if (mod(b-1, nTrainToTestFactor) == 0)	
+                vTestTargets = [vTestTargets; mLocTargets];
+                cTestData = [cTestData; mLocFeatures];
+            else
+                vTrainTargets = [vTrainTargets; mLocTargets];
+                cTrainData = [cTrainData; mLocFeatures];
+            end; % end if-else
+            
+        elseif strcmp(sCriteria, 'CrossValidation')
+            cv_obj = cvpartition(vTargets,'kfold',nTrainToTestFactor);            
+            %load('../data/ATB/cv_obj');
+            train_ind = cv_obj.training(params.CVNUM);
+            test_ind = cv_obj.test(params.CVNUM);
+           
+            vTestTargets = cData(test_ind,:);
+            cTestData = vTargets(test_ind,:);
+            vTrainTargets = vTargets(train_ind,:);
+            cTrainData = cData(train_ind,:);
+            
+        elseif strcmp(sCriteria, 'KnownSplit')
+
+            train_ind = zeros(1180, 1);
+            train_ind(237:end) = 1;
+            train_ind = logical(full_train_ind);
+            
+            test_ind = zeros(1180, 1);
+            test_ind(1:236) = 1;
+            test_ind = logical(test_ind);
+            
+            vTestTargets = cData(test_ind,:);
+            cTestData = vTargets(test_ind,:);
+            vTrainTargets = vTargets(train_ind,:);
+            cTrainData = cData(train_ind,:);
         end % end if-elseif
         
-        % Feed test and train sets according to the ratio configured
-        if (mod(b-1, nTrainToTestFactor) == 0)	
-            mTestTargets = [mTestTargets; mLocTargets];
-            mTestFeatures = [mTestFeatures; mLocFeatures];
-        else
-            mTrainTargets = [mTrainTargets; mLocTargets];
-            mTrainFeatures = [mTrainFeatures; mLocFeatures];
-        end; % end if-else
+
     end; % end for
 
 end % end function

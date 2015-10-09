@@ -6,12 +6,19 @@ function CONFIG_setConfigParams()
     % Set the path to the classifier, which is the same path in case of RAE
     CONFIG_strParams.sDefaultClassifierPath = pwd;
     
+    % In case of 'RAE', although RAE by itself is not a classifier, but the application is built to test the discovered features by RAE on a classification task using softmax. So in case you just to train an unsupervised RAE, then just set all the labels to zeros, then when the training is over, just use the NM_getFeaturesRAE
+    CONFIG_setConfigParams.eClassifierType = 'RAE';
+    
     % Configuration of the dataset to be used
     % ATB_Senti_RAE
     CONFIG_strParams.sDataset = 'ATB_Senti_RAE';
     
-    % Split the input data 'uniform' or 'random'
+    % Split the input data 'uniform' or 'random' 'CrossValidation' 'KnownSplit
     CONFIG_strParams.sSplitCriteria = 'random';
+    
+        % In case of KnownSplit, then set the TRAIN/TEST ranges
+        CONFIG_strParams.vTrainRange = [237:end];
+        CONFIG_strParams.vTestRange = [1:236];
     
     % Ration of train to test factor ratio
     CONFIG_strParams.nTrainToTestFactor = 10; % Nearly examples are train

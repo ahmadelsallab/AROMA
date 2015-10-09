@@ -25,21 +25,21 @@ function MAIN_trainAndClassify(CONFIG_strParams)
     fprintf(1, 'Conversion done successfuly\n');
     
 	fprintf(1, 'Splitting dataset into train and test sets...\n');
-	[mTestFeatures, mTestTargets, mTrainFeatures, mTrainTargets] = TTS_formTrainTestSets(cData, vTargets);
+	[cTestData, vTestTargets, cTrainData, vTrainTargets] = TTS_formTrainTestSets(cData, vTargets);
     
 % 	switch (CONFIG_strParams.sInputFormat)
 % 		case 'MatlabWorkspaceReadyTestTrainSplit'
 % 			%load(CONFIG_strParams.sInputDataWorkspace);
-% 			DPREP_strData.mTestFeatures = mTestFeatures;
-% 			DPREP_strData.mTestTargets = mTestTargets;
-% 			DPREP_strData.mTrainFeatures = mTrainFeatures;
-% 			DPREP_strData.mTrainTargets = mTrainTargets;
-%             clear mTestFeatures mTestTargets mTrainFeatures mTrainTargets;
+% 			DPREP_strData.cTestData = cTestData;
+% 			DPREP_strData.vTestTargets = vTestTargets;
+% 			DPREP_strData.cTrainData = cTrainData;
+% 			DPREP_strData.vTrainTargets = vTrainTargets;
+%             clear cTestData vTestTargets cTrainData vTrainTargets;
 %         %case 'CrossVal'
 %             %TTS_formTrainTestSets_CV()
 %         otherwise
 % 			% Split into train and test sets
-% 			[DPREP_strData.mTestFeatures, DPREP_strData.mTestTargets, DPREP_strData.mTrainFeatures, DPREP_strData.mTrainTargets] =... 
+% 			[DPREP_strData.cTestData, DPREP_strData.vTestTargets, DPREP_strData.cTrainData, DPREP_strData.vTrainTargets] =... 
 % 				TTS_formTrainTestSets(DPREP_strData.mFeatures,...
 % 									  DPREP_strData.mTargets,...
 % 									  CONFIG_strParams.sSplitCriteria,...
@@ -47,10 +47,10 @@ function MAIN_trainAndClassify(CONFIG_strParams)
 %                 
 %                 %Save split data
 %                 save(CONFIG_strParams.sInputDataWorkspace, '-struct', 'DPREP_strData', '-append',...
-%                      'mTestFeatures',...
-%                      'mTestTargets',...
-%                      'mTrainFeatures',...
-%                      'mTrainTargets');
+%                      'cTestData',...
+%                      'vTestTargets',...
+%                      'cTrainData',...
+%                      'vTrainTargets');
 %                 
 %                 if(strcmp(CONFIG_strParams.sMemorySavingMode, 'ON'))
 %                     % clear DPREP_strData.mFeatures DPREP_strData.mTargets;
@@ -63,7 +63,7 @@ function MAIN_trainAndClassify(CONFIG_strParams)
 	fprintf(1, 'Splitting done successfully\n');
 
     % Load auto label data if enabled
- 	%[DPREP_strData.mTrainTargets, DPREP_strData.mAutoLabels] = DPREP_autoLabel(DPREP_strData.mTrainTargets, CONFIG_strParams);
+ 	%[DPREP_strData.vTrainTargets, DPREP_strData.mAutoLabels] = DPREP_autoLabel(DPREP_strData.vTrainTargets, CONFIG_strParams);
  
 	fprintf(1, 'Start learning process\n');
 	switch(CONFIG_strParams.eClassifierType)
@@ -71,7 +71,7 @@ function MAIN_trainAndClassify(CONFIG_strParams)
             LM_startLearningProcessRAE;
 % 			LM_startLearningProcessRAE(CONFIG_strParams,...
 %                                        mDevFeatures, mDevTargets,...
-%                                        DPREP_strData.mTestFeatures, DPREP_strData.mTestTargets, DPREP_strData.mTrainFeatures, DPREP_strData.mTrainTargets,...
+%                                        DPREP_strData.cTestData, DPREP_strData.vTestTargets, DPREP_strData.cTrainData, DPREP_strData.vTrainTargets,...
 %                                        DPREP_strData.mTrainBatchTargets, DPREP_strData.mTrainBatchData, DPREP_strData.mTestBatchTargets, DPREP_strData.mTestBatchData,...
 %                                        DPREP_strData.nBitfieldLength, DPREP_strData.vChunkLength, DPREP_strData.vOffset, DPREP_strData.mAutoLabels);
 %             
