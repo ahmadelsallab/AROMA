@@ -11,8 +11,11 @@ function MAIN_trainAndClassify(CONFIG_strParams)
 	switch(CONFIG_strParams.sDataset)
         case 'ATB_Senti_RAE'
         	% The output of conversion is saved in CONFIG_strParams.sInputDataWorkspace
-			[mFeatures, mTargets] = DCONV_convertATB_Senti_RAE(CONFIG_strParams);
+			[cData, vTargets, cKids] = DCONV_convertATB_Senti_RAE();
             
+        case 'Movie_Reviews'
+            % TBD
+            %[cData, vTargets, cKids] = DCONV_convertMovie_Reviews();
 		otherwise
 			% Do nothing
 	end
@@ -22,7 +25,8 @@ function MAIN_trainAndClassify(CONFIG_strParams)
     fprintf(1, 'Conversion done successfuly\n');
     
 	fprintf(1, 'Splitting dataset into train and test sets...\n');
-	[mTestFeatures, mTestTargets, mTrainFeatures, mTrainTargets] = TTS_formTrainTestSets(mFeatures, mTargets, CONFIG_strParams.sSplitCriteria, CONFIG_strParams.nTrainToTestFactor);
+	[mTestFeatures, mTestTargets, mTrainFeatures, mTrainTargets] = TTS_formTrainTestSets(cData, vTargets);
+    
 % 	switch (CONFIG_strParams.sInputFormat)
 % 		case 'MatlabWorkspaceReadyTestTrainSplit'
 % 			%load(CONFIG_strParams.sInputDataWorkspace);

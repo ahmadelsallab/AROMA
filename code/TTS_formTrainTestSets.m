@@ -2,16 +2,15 @@
 % Forms the train and test sets out of the raw data given. The criteria of
 % split is defined in the inputs
 % Inputs:
-% mFeatures: Raw features. Matrix (nxm), where n is the number of examples and m is the features vector length
+% cData: the input non split data
 % mTargets: Raw targets. Matrix (nxl), where n is the number of examples and l is the number of target classes
-% sCriteria: The splitting criteria
 % nTrainToTestFactor: The ratio of splitting train to test sets
 % Output:
 % mTestFeatures: Test features. Matrix (nxm), where n is the number of examples and m is the features vector length
 % mTestTargets: Test targetss. Matrix (nxl), where n is the number of examples and l is the number of target classes
 % mTrainFeatures: Train features. Matrix (nxm), where n is the number of examples and m is the features vector length
 % mTrainTargets: Train targets. Matrix (nxl), where n is the number of examples and l is the number of target classes
-function [mTestFeatures, mTestTargets, mTrainFeatures, mTrainTargets] = TTS_formTrainTestSets(mFeatures, mTargets, sCriteria, nTrainToTestFactor)
+function [mTestFeatures, mTestTargets, mTrainFeatures, mTrainTargets] = TTS_formTrainTestSets(cData, vTargets)
     
     % Initialize the matrices
     mTestTargets = [];

@@ -4,9 +4,9 @@ clear, clc;
 %txtFileName = '..\..\Datasets\ATB\input\ATB1v3_UTF8.txt';%..\..\Datasets\ArSenL\corpus lemmas.txt
 %annotationsFileName = '..\..\Datasets\ATB\annotations.txt';%..\..\Datasets\ArSenL\annotation_sentiment.txt
 %txtFileName = '..\..\Datasets\ArSenL\corpus lemmas.txt';
-txtFileName = '..\..\Datasets\ATB\punctuations_handled\ATB (preprocessed tokens).txt';
+txtFileName = '..\..\Datasets\ATB\punctuations_handled\ATB (preprocessed).txt';
 annotationsFileName = '..\..\Datasets\ArSenL\annotation_sentiment.txt';
-knownParseFileName = '..\..\Datasets\ATB\stanford parser\token-level\atb (combined nodes indices, tokens).txt';
+knownParseFileName = '..\..\Datasets\ATB\stanford parser\word-level\atb (combined nodes indices, words).txt';
 global CONFIG_strParamsGUI;
 if(~isempty(CONFIG_strParamsGUI))
     txtFileName = CONFIG_strParamsGUI.sSupervisedDataSetPath;
