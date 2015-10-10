@@ -1,11 +1,14 @@
 % Function:
 % The main entry point to train and test Generic Deep ANN
 % Inputs:
-% CONFIG_strParams: the configurations parameters to be used
+% None
 % Output:
 % None
-function MAIN_trainAndClassify(CONFIG_strParams)    
+function MAIN_trainAndClassify()    
     rand('state',0);
+    % Load configurations
+    global CONFIG_strParams;
+    
     fprintf(1, 'Converting input files...\n');
 	% Check the dataset used
 	switch(CONFIG_strParams.sDataset)

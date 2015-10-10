@@ -54,7 +54,10 @@ function CONFIG_setConfigParams()
           
           % N-gram validity We
           CONFIG_strParams.bNgramValidWe = get(handles.bNgramValidWe, 'Value');
-          
+              
+              % The name of N-gram validity workspace
+              CONFIG_strParams.sNgramValidWorkspaceName = '../data/ATB_We/final_net.mat';
+              
               % The path to the unsupervised dataset (Qalb for example)
               CONFIG_strParams.sUnsupervisedWeDatasetPath = get(handles.sUnsupervisedWeDatasetPath, 'String');
 
@@ -63,7 +66,9 @@ function CONFIG_setConfigParams()
           
           % blexiconembedding embedding
           CONFIG_strParams.bLexiconEmbedding = get(handles.bLexiconEmbedding, 'Value');
-          
+            
+            % The name of the embedding workspace
+            CONFIG_strParams.sLexiconEmbeddingWorkspaceName = '../data/ATB_ArSenL_Embedding/final_net_ArSenL_embedding.mat';
             % Flag to indicate if we need to include the objective score in
             % case of sentiment
             CONFIG_strParams.bLexiconEmbeddingObjectiveScoreIncluded = get(handles.bLexiconEmbeddingObjectiveScoreIncluded, 'Value');
