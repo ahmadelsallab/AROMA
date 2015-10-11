@@ -7,6 +7,8 @@ W2 = rand(nHiddenSize, nVisibleSize) * 2 * r - r;
 W3 = rand(nVisibleSize, nHiddenSize) * 2 * r - r;
 W4 = rand(nVisibleSize, nHiddenSize) * 2 * r - r;
 
+
+
 global CONFIG_strParams;
 if (CONFIG_strParams.bNgramValidWe)
     

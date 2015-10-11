@@ -1,5 +1,5 @@
 function [cost_total,grad_total] = UNSUP_trainRAE(theta, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
-    lambda, We_orig, data_cell, labels, freq_orig, sent_freq, f, f_prime, allKids)
+    lambda, We_orig, data_cell, labels, freq_orig, f, f_prime, allKids)
 
 [~, ~, ~, ~, ~, ~, ~, Wcat, bcat, We] = getW(1, theta, hiddenSize, cat_size, dictionary_length);
 

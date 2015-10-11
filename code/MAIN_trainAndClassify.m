@@ -14,7 +14,7 @@ function MAIN_trainAndClassify()
 	switch(CONFIG_strParams.sDataset)
         case 'ATB_Senti_RAE'
         	% The output of conversion is saved in CONFIG_strParams.sInputDataWorkspace
-			[cData, vTargets, cKids] = DCONV_convertATB_Senti_RAE();
+			[cData, vTargets, cKids, nDictionaryLength] = DCONV_convertATB_Senti_RAE();
             
         case 'Movie_Reviews'
             % TBD
@@ -71,13 +71,8 @@ function MAIN_trainAndClassify()
 	fprintf(1, 'Start learning process\n');
 	switch(CONFIG_strParams.eClassifierType)
         case 'RAE'
-            LM_startLearningProcessRAE;
-% 			LM_startLearningProcessRAE(CONFIG_strParams,...
-%                                        mDevFeatures, mDevTargets,...
-%                                        DPREP_strData.cTestData, DPREP_strData.vTestTargets, DPREP_strData.cTrainData, DPREP_strData.vTrainTargets,...
-%                                        DPREP_strData.mTrainBatchTargets, DPREP_strData.mTrainBatchData, DPREP_strData.mTestBatchTargets, DPREP_strData.mTestBatchData,...
-%                                        DPREP_strData.nBitfieldLength, DPREP_strData.vChunkLength, DPREP_strData.vOffset, DPREP_strData.mAutoLabels);
-%             
+            LM_startLearningProcessRAE(cTestData, vTestTargets, cTrainData, vTrainTargets, nDictionaryLength);
+             
 	end % end switch
 	fprintf(1, 'Learning process performed successfuly\n'); 
 % 

@@ -5,7 +5,7 @@
 % cData: the binarized data (cData)
 % vTargets: the corresponding vTargets (vTargets)
 % cKids: the parse tree in case CONFIG_strParams.bKnownParses is 1
-function [cData, vTargets, cKids] = DCONV_convertATB_Senti_RAE()
+function [cData, vTargets, cKids, nDictionaryLength] = DCONV_convertATB_Senti_RAE()
     
     % Load configurations
     global CONFIG_strParams;
@@ -71,5 +71,7 @@ function [cData, vTargets, cKids] = DCONV_convertATB_Senti_RAE()
     fprintf(1, 'Vocabulary scoring done');
     % Close the files
     fclose(fid);
+    
+    nDictionaryLength = length(cWords);
 
 end % end function

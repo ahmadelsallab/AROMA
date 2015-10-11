@@ -1,4 +1,4 @@
-function [W1 W2 W3 W4 b1 b2 b3 Wcat bcat We] = getW(Wcat_flag, theta, hiddenSize, cat_size, dictionary_length)
+function [W1 W2 W3 W4 b1 b2 b3 Wcat bcat We] = NM_getRAEWeights(Wcat_flag, theta, hiddenSize, cat_size, dictionary_length)
 Wcat = [];
 bcat = [];
 visibleSize = hiddenSize * 2;
