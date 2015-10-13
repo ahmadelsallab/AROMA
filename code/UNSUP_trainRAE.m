@@ -1,7 +1,7 @@
 function [cost_total,grad_total] = UNSUP_trainRAE(theta, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
     lambda, We_orig, data_cell, labels, freq_orig, f, f_prime, allKids)
 
-[~, ~, ~, ~, ~, ~, ~, Wcat, bcat, We] = getW(1, theta, hiddenSize, cat_size, dictionary_length);
+[~, ~, ~, ~, ~, ~, ~, Wcat, bcat, We] = NM_getRAEWeights(1, theta, hiddenSize, cat_size, dictionary_length);
 
 szWe = length(We(:));
 szbcat = length(bcat(:));
@@ -21,14 +21,14 @@ lambda(4) = lambda2(3);
 % data_cell=data_cell(1:2);
     % [costRAE, gradRAE, allKids] = computeCostAndGradRAE([], theta1, 0, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
         % (alpha_cat)*lambda, We_orig , data_cell, labels, freq_orig, f, f_prime, 0);
- global bKnownParses;
- if(bKnownParses)
+ global CONFIG_strParams;
+ if(CONFIG_strParams.bKnownParsing)
      %load(preProFile, 'allKids');
-     [costRAE, gradRAE, allKids] = computeCostAndGradRAE(allKids, theta1, 0, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
+     [costRAE, gradRAE, allKids] = UNSUP_computeCostAndGradRAE(allKids, theta1, 0, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
          (alpha_cat)*lambda, We_orig , data_cell, labels, freq_orig, f, f_prime, 0);
  
  else
-     [costRAE, gradRAE, allKids] = computeCostAndGradRAE([], theta1, 0, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
+     [costRAE, gradRAE, allKids] = UNSUP_computeCostAndGradRAE([], theta1, 0, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
          (alpha_cat)*lambda, We_orig , data_cell, labels, freq_orig, f, f_prime, 0);
  end
 
@@ -38,7 +38,7 @@ gradRAE(end-szWe+1:end) = 0;
 gradRAE = [gradRAE; zeros(szbcat+szWcat,1)];
 gradRAE(end-szWe+1:end) = WegradRAE;
 
-[costSUP, gradSUP] = computeCostAndGradRAE(allKids, theta2, 1, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
+[costSUP, gradSUP] = UNSUP_computeCostAndGradRAE(allKids, theta2, 1, alpha_cat, cat_size, beta, dictionary_length, hiddenSize, ...
     (1-alpha_cat)*lambda2, zeros(size(We_orig)), data_cell, labels, freq_orig, f, f_prime, 0);
 
 cost_total =  costRAE + costSUP;

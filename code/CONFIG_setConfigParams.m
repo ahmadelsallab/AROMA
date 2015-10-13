@@ -3,6 +3,9 @@
 function CONFIG_setConfigParams()
     global CONFIG_strParams;
     
+    % State the experiment purpose
+    CONFIG_strParams.sExperimentPurpose = 'Default: Test';
+    
     % Set the path to the classifier, which is the same path in case of RAE
     CONFIG_strParams.sDefaultClassifierPath = pwd;
     
@@ -85,39 +88,48 @@ function CONFIG_setConfigParams()
             % Flag to indicate to merge at features 
             CONFIG_strParams.sMergeOption = (get(get(handles.sMergeOption,'SelectedObject'),'Tag'));
                 
-       % Flag to indicate if separate parser was used to get ready parse
-       % trees
-       CONFIG_strParams.bKnownParsing = get(handles.bKnownParsing, 'Value');
-            % Get the path to the known parse trees
-            CONFIG_strParams.sParseFilePath = get(handles.sParseFilePath, 'String');
+   % Flag to indicate if separate parser was used to get ready parse
+   % trees
+   CONFIG_strParams.bKnownParsing = get(handles.bKnownParsing, 'Value');
+        % Get the path to the known parse trees
+        CONFIG_strParams.sParseFilePath = get(handles.sParseFilePath, 'String');
 
-        %%%%%%%%%%%%%%%%%%%%%%
-        % RAE Hyperparameters
-        %%%%%%%%%%%%%%%%%%%%%%
-        % set this to 1 to train the model and to 0 for just testing the RAE features (and directly training the classifier)
-        CONFIG_strParams.RAEParams.trainModel = 1;
+    %%%%%%%%%%%%%%%%%%%%%%
+    % RAE Hyperparameters
+    %%%%%%%%%%%%%%%%%%%%%%
+    % set this to 1 to train the model and to 0 for just testing the RAE features (and directly training the classifier)
+    CONFIG_strParams.RAEParams.trainModel = 1;
 
-        % node and word size
-        CONFIG_strParams.RAEParams.nEmbeddingSize = CONFIG_strParams.nEmbeddingSize;
+    % node and word size
+    CONFIG_strParams.RAEParams.nEmbeddingSize = CONFIG_strParams.nEmbeddingSize;
 
-        % Relative weighting of reconstruction error and categorization error
-        CONFIG_strParams.RAEParams.nAlphaCat = 0.2;
+    % Relative weighting of reconstruction error and categorization error
+    CONFIG_strParams.RAEParams.nAlphaCat = 0.2;
 
-        % Regularization: nLambda = [lambdaW, lambdaL, lambdaCat, lambdaLRAE];
-        CONFIG_strParams.RAEParams.nLambda = [1e-05, 0.0001, 1e-07, 0.01];
+    % Regularization: nLambda = [lambdaW, lambdaL, lambdaCat, lambdaLRAE];
+    CONFIG_strParams.RAEParams.nLambda = [1e-05, 0.0001, 1e-07, 0.01];
 
-        % weight of classifier cost on nonterminals
-        CONFIG_strParams.RAEParams.nBeta=0.5;
+    % weight of classifier cost on nonterminals
+    CONFIG_strParams.RAEParams.nBeta=0.5;
 
-        CONFIG_strParams.RAEParams.sActivationFunction = @norm1tanh;
-        CONFIG_strParams.RAEParams.sActivationFunctionPrime = @norm1tanh_prime;
+    CONFIG_strParams.RAEParams.sActivationFunction = @norm1tanh;
+    CONFIG_strParams.RAEParams.sActivationFunctionPrime = @norm1tanh_prime;
 
-        CONFIG_strParams.RAEParams.CVNUM = 1;
-        
-        % parameters for the optimizer
-        CONFIG_strParams.RAEParams.Options.Method = 'lbfgs';
-        CONFIG_strParams.RAEParams.Options.display = 'on';
-        CONFIG_strParams.RAEParams.Options.maxIter = CONFIG_strParams.nMaxIter;
-
-        disp(CONFIG_strParams.RAEParams);
-        disp(CONFIG_strParams.RAEParams.Options);
+    CONFIG_strParams.RAEParams.CVNUM = 1;
+    
+    % parameters for the optimizer
+    CONFIG_strParams.RAEParams.Options.Method = 'lbfgs';
+    CONFIG_strParams.RAEParams.Options.display = 'on';
+    CONFIG_strParams.RAEParams.Options.maxIter = CONFIG_strParams.nMaxIter;
+    
+    % for multinomial distributions this would be >1
+    CONFIG_strParams.RAEParams.nCategorySize = 1;
+    
+    disp(CONFIG_strParams.RAEParams);
+    disp(CONFIG_strParams.RAEParams.Options);
+    
+    % Softmax parameters
+    CONFIG_strParams.SoftmaxOptions.Method = 'lbfgs';
+    CONFIG_strParams.SoftmaxOptions.maxIter = 1000;
+    
+    CONFIG_strParams.sResultsFile = '../output/ATB/resultsRAE.txt';

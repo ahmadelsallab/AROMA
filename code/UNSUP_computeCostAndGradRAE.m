@@ -12,7 +12,7 @@ if isempty(allKids)
     allKids = cell(num_examples,1);
 end
 
-[W1, W2, W3, W4, b1, b2, b3, Wcat, bcat, We] = getW(updateWcat, theta, hiddenSize, cat_size, dictionary_length);
+[W1, W2, W3, W4, b1, b2, b3, Wcat, bcat, We] = NM_getRAEWeights(updateWcat, theta, hiddenSize, cat_size, dictionary_length);
 
 cost_total = 0;
 gradW1 = zeros(size(W1));
@@ -28,8 +28,9 @@ grad_We_total = sparse(hiddenSize, dictionary_length);
 num_nodes = 0;
 
 range = 1:num_examples;
-global bKnownParses;
-local_bKnownParses = bKnownParses;
+
+global CONFIG_strParams;
+local_bKnownParses = CONFIG_strParams.bKnownParsing;
 
 %parfor ii = range;
 for ii = range;
@@ -50,7 +51,7 @@ for ii = range;
         
         % Forward Propagation
         if updateWcat
-            Tree = forwardPropRAE(allKids{ii}, W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat, beta, words_embedded, current_label, hiddenSize, sl, freq, f, f_prime);
+            Tree = NM_forwardPropRAE(allKids{ii}, W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat, beta, words_embedded, current_label, hiddenSize, sl, freq, f, f_prime);
             cost = sum(Tree.nodeScores) ; % Include leaf node error (supervised)
             num_nodes = num_nodes + 1;
             
@@ -62,12 +63,12 @@ for ii = range;
 %              fprintf(fid_parse, ['SENTENCE ' num2str(ii) ']\n']);
 %              fclose(fid_parse);
              if(local_bKnownParses)
-                 Tree = forwardPropRAE(allKids{ii}, W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
+                 Tree = NM_forwardPropRAE(allKids{ii}, W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
              
              else
-                 Tree = forwardPropRAE([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
+                 Tree = NM_forwardPropRAE([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
              end
-             % Tree = forwardPropRAE([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
+             % Tree = NM_forwardPropRAE([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
              
              % Add enter after the sentence
 %              fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');

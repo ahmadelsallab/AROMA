@@ -28,7 +28,7 @@ function MAIN_trainAndClassify()
     fprintf(1, 'Conversion done successfuly\n');
     
 	fprintf(1, 'Splitting dataset into train and test sets...\n');
-	[cTestData, vTestTargets, cTrainData, vTrainTargets] = TTS_formTrainTestSets(cData, vTargets);
+	[cTestData, vTestTargets, cTrainData, vTrainTargets, cTrainKids, cTestKids] = TTS_formTrainTestSets(cData, vTargets, cKids);
     
 % 	switch (CONFIG_strParams.sInputFormat)
 % 		case 'MatlabWorkspaceReadyTestTrainSplit'
@@ -71,7 +71,7 @@ function MAIN_trainAndClassify()
 	fprintf(1, 'Start learning process\n');
 	switch(CONFIG_strParams.eClassifierType)
         case 'RAE'
-            LM_startLearningProcessRAE(cTestData, vTestTargets, cTrainData, vTrainTargets, nDictionaryLength);
+            LM_startLearningProcessRAE(cTestData, vTestTargets, cTrainData, vTrainTargets, cTrainKids, cTestKids, nDictionaryLength);
              
 	end % end switch
 	fprintf(1, 'Learning process performed successfuly\n'); 
