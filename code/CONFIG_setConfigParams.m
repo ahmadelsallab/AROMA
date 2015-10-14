@@ -28,8 +28,10 @@ function CONFIG_setConfigParams()
     
     % When a vocabulary is known, or obtained from a separate embedding network, set this parameter to 1.
     % For raw RAE, it's just 0.
+    % The cases when the vocabulary is known is like using separate word embedding, DNN or word2vec. In such cases, we need to know the vocabulary wordMap so that to extract the indices of any given sentence accordingly. The reason of not extracting and saving the sentences as sequence of word vectors is to save memory. So we extract inidices and then we translate the indices to word vectors when needed.
+    
     CONFIG_strParams.bKnownVocabulary = 0;
-        % In case of known parsing, this is the FULL path to the .mat file of the vocabulary
+        % In case of separate embedding, this is the FULL path to the .mat file of the vocabulary
         CONFIG_strParams.sVocabularyFile = '../data/ATB/vocab.mat';
     
     % Full path to the raw txt dataset. Each line is a separate case.
@@ -80,7 +82,9 @@ function CONFIG_setConfigParams()
             CONFIG_strParams.sIndicesFilePath = get(handles.sIndicesFilePath, 'String');
             
             % Path to sVocabularyFilePath file
-            CONFIG_strParams.sVocabularyFilePath = get(handles.sVocabularyFilePath, 'String');
+            if(CONFIG_strParams.bLexiconEmbedding)
+                CONFIG_strParams.sVocabularyFile = get(handles.sVocabularyFilePath, 'String');
+            end
             
         % Flag to indicate to merge bLexiconEmbedding with word embedding
         CONFIG_strParams.bMergeLexiconNgram = get(handles.bMergeLexiconNgram, 'Value');

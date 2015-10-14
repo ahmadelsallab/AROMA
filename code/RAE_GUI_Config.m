@@ -22,7 +22,7 @@ function varargout = RAE_GUI_Config(varargin)
 
 % Edit the above text to modify the response to help RAE_GUI_Config
 
-% Last Modified by GUIDE v2.5 10-Sep-2015 18:06:34
+% Last Modified by GUIDE v2.5 14-Oct-2015 11:57:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -628,3 +628,60 @@ function run_Embedding_Callback(hObject, eventdata, handles)
         end
     end
     
+
+
+
+function sKnownParseVocabularyFIle_Callback(hObject, eventdata, handles)
+% hObject    handle to sKnownParseVocabularyFIle (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of sKnownParseVocabularyFIle as text
+%        str2double(get(hObject,'String')) returns contents of sKnownParseVocabularyFIle as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function sKnownParseVocabularyFIle_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sKnownParseVocabularyFIle (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pushbutton29.
+function pushbutton29_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton29 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    [FileName,PathName] = uigetfile('*','Select the raw text file');
+    set(handles.sVocabularyFilePath, 'String', [PathName FileName]);
+    global CONFIG_strParamsGUI;
+    CONFIG_strParamsGUI.sVocabularyFile = [PathName FileName];
+
+% --- Executes on button press in pushbutton25.
+function pushbutton25_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton25 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    [FileName,PathName] = uigetfile('*','Select the raw text file');
+    set(handles.sKnownParseVocabularyFIle, 'String', [PathName FileName]);
+    global CONFIG_strParamsGUI;
+    CONFIG_strParamsGUI.sVocabularyFile = [PathName FileName];
+
+% --- Executes on button press in pushbutton24.
+function pushbutton24_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton24 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes during object creation, after setting all properties.
+function pushbutton22_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pushbutton22 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called

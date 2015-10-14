@@ -10,6 +10,7 @@ function [cData, vTargets, cKids, nDictionaryLength] = DCONV_convertATB_Senti_RA
     % Load configurations
     global CONFIG_strParams;
     sTxtFileName = CONFIG_strParams.sSupervisedDataSetPath;
+    sIndicesFileName = CONFIG_strParams.sIndicesFileName;
     sAnnotationsFileName = CONFIG_strParams.sAnnotationsFilePath;
     sKnownParseFileName = CONFIG_strParams.sParseFilePath;
     sDirName = CONFIG_strParams.sDataDirectory;
@@ -19,6 +20,14 @@ function [cData, vTargets, cKids, nDictionaryLength] = DCONV_convertATB_Senti_RA
     
     % Load the vTargets
     vTargets = csvread(sAnnotationsFileName);
+    
+    % Load the nIndices, if ready nIndices file exists.
+    if(sIndicesFileName != '')
+        mIndices = csvread(sIndicesFileName);
+        bReadyIndices = 1;
+    else
+        bReadyIndices = 0;
+    end
     
     % Get the sentences sLine by sLine
     sLine = fgetl(fid);
@@ -34,13 +43,24 @@ function [cData, vTargets, cKids, nDictionaryLength] = DCONV_convertATB_Senti_RA
     fprintf(1, 'Start reading the input file...');
     while sLine > 0        
         
-        % Get the sLine cWords
-        cLineWords = regexp(sLine,' ','split');
-        cLineWords = cLineWords';        
-        cRawData{ctrNum} = cLineWords';
-    
-        % Add the sLine cWords
-        cWords = [cWords; cLineWords];
+        if(bReadyIndices)
+            sLine = strtrim(sLine);
+            % CSV files lines end with 0
+            vNonZero = find(nIndices(ctrNum,:) == 0);
+            vNonZero = vNonZero(1);
+            % Indices are zero based, while embedding lookup table is 1 based,
+            % so we add 1 here
+            vLineIndices = nIndices(ctrNum, 1 : vNonZero - 1) + 1;
+            cRawData{ctrNum} = vLineIndices;
+        else
+            % Get the sLine cWords
+            cLineWords = regexp(sLine,' ','split');
+            cLineWords = cLineWords';        
+            cRawData{ctrNum} = cLineWords';
+        
+            % Add the sLine cWords
+            cWords = [cWords; cLineWords];
+        end
         
         % Get next sLine
         ctrNum = ctrNum + 1;
@@ -49,29 +69,48 @@ function [cData, vTargets, cKids, nDictionaryLength] = DCONV_convertATB_Senti_RA
     end
     fprintf(1, 'Finished reading %d lines', num2str(ctrNum-1));
     
-    fprintf(1, 'Start vocabulary scoring...');
-    % Make unique vocabulary
-    if(CONFIG_strParams.bKnownVocabulary)
-        % In case the vocabulary is mandated, we just load it
-        load(CONFIG_strParams.sVocabularyFile, 'cWords')
-    else
-        cWords = unique(cWords);        
-    end
-    wordMap = containers.Map(cWords,1:length(cWords));
-    
-    % Now score for each sentence the indices of cWords
-    cData = {};
-    for lineIdx = 1 : size(cRawData, 2)
-        lineWordsIndices = [];
-        for wordIdx = 1 : size(cRawData{lineIdx}, 2)
-            lineWordsIndices(wordIdx) = wordMap(cRawData{lineIdx}{wordIdx});
+    if(bReadyIndices)
+        if (CONFIG_strParams.bNgramValidWe)       
+            load(CONFIG_strParams.sNgramValidWorkspaceName, 'NM_strNetParams');
+            We = NM_strNetParams.cWeights{1};
+            We = We';
+            nDictionaryLength = size(We, 2);
+        elseif (CONFIG_strParams.bLexiconEmbedding)
+            load(CONFIG_strParams.sLexiconEmbeddingWorkspaceName, 'NM_strNetParams');
+            We = NM_strNetParams.cWeights{1};
+            We = We';   
+            nDictionaryLength = size(We, 2);            
+        elseif(CONFIG_strParams.bKnownVocabulary)
+            load(CONFIG_strParams.sVocabularyFile, 'words');
+            nDictionaryLength = length(words);        
         end
-        cData{lineIdx} = lineWordsIndices;
-    end
-    fprintf(1, 'Vocabulary scoring done');
-    % Close the files
-    fclose(fid);
-    
-    nDictionaryLength = length(cWords);
 
+        cData = cRawData;
+    else
+        fprintf(1, 'Start vocabulary scoring...');
+        % Make unique vocabulary
+        if(CONFIG_strParams.bKnownVocabulary)
+            % In case the vocabulary is mandated, we just load it
+            load(CONFIG_strParams.sVocabularyFile, 'cWords')
+        else
+            cWords = unique(cWords);        
+        end
+        wordMap = containers.Map(cWords,1:length(cWords));
+        
+        % Now score for each sentence the nIndices of cWords
+        
+        cData = {};
+        for lineIdx = 1 : size(cRawData, 2)
+            lineWordsIndices = [];
+            for wordIdx = 1 : size(cRawData{lineIdx}, 2)
+                lineWordsIndices(wordIdx) = wordMap(cRawData{lineIdx}{wordIdx});
+            end
+            cData{lineIdx} = lineWordsIndices;
+        end
+        fprintf(1, 'Vocabulary scoring done');
+        % Close the files
+        fclose(fid);
+    
+        nDictionaryLength = length(cWords);
+    end
 end % end function
