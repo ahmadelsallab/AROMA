@@ -102,8 +102,14 @@ function [cData, vTargets, cKids, nDictionaryLength] = DCONV_convertATB_Senti_RA
         cData = {};
         for lineIdx = 1 : size(cRawData, 2)
             lineWordsIndices = [];
+            actualWordIdx = 1;
             for wordIdx = 1 : size(cRawData{lineIdx}, 2)
-                lineWordsIndices(wordIdx) = wordMap(cRawData{lineIdx}{wordIdx});
+                % The following check must succeed in case of all dataset words are in the vocabulary. So actualWordIx = wordIdx.
+                % In case of knownVocabulary, only the words in the vocabulary will be scored and others are skipped.
+                if(isKey(wordMap, cRawData{lineIdx}{wordIdx}))
+                    lineWordsIndices(actualWordIdx) = wordMap(cRawData{lineIdx}{wordIdx});
+                    actualWordIdx = actualWordIdx + 1;
+                end
             end
             cData{lineIdx} = lineWordsIndices;
         end
