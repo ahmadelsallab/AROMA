@@ -1,5 +1,4 @@
-function LM_startLearningProcessRAE(cTestData, vTestTargets, cTrainData, vTrainTargets, cTrainKids, cTestKids, nDictionaryLength)
-    clear, clc;
+function LM_startLearningProcessRAE(cTestData, vTestTargets, cTrainData, vTrainTargets, cTrainKids, cTestKids, cUnsupervisedData, cUnsupervisedKids, nDictionaryLength)
 
     % Load minFunc
     addpath(genpath('tools/'))
@@ -37,12 +36,23 @@ function LM_startLearningProcessRAE(cTestData, vTestTargets, cTrainData, vTrainT
     %%%%%%%%%%%%%%%%%%%%%%
     
     % Set unsupervised word embedding dataset
-    snum_We = cTrainData; % TBD
+    if(sUnsupervisedTxtFileName != '')
+        cUnsupervisedTrainData = [cTrainData; cUnsupervisedData];
+        cKids = [cTrainKids; cUnsupervisedKids];
+    else
+        cUnsupervisedTrainData = cTrainData;
+        cKids = cTrainKids;
+    end
         
-    [vRAEWeights, cost] = minFunc( @(p)UNSUP_trainRAE(p, CONFIG_strParams.RAEParams.nAlphaCat, CONFIG_strParams.RAEParams.nCategorySize,CONFIG_strParams.RAEParams.nBeta, nDictionaryLength, CONFIG_strParams.RAEParams.nEmbeddingSize, ...
-        CONFIG_strParams.RAEParams.nLambda, We, cTrainData, vTrainTargets, freq_train, CONFIG_strParams.RAEParams.sActivationFunction, CONFIG_strParams.RAEParams.sActivationFunctionPrime), ...
-        vRAEWeights, CONFIG_strParams.RAEParams.Options);
-    
+    if(CONFIG_strParams.bKnownParsing)
+        [vRAEWeights, cost] = minFunc( @(p)UNSUP_trainRAE(p, CONFIG_strParams.RAEParams.nAlphaCat, CONFIG_strParams.RAEParams.nCategorySize,CONFIG_strParams.RAEParams.nBeta, nDictionaryLength, CONFIG_strParams.RAEParams.nEmbeddingSize, ...
+            CONFIG_strParams.RAEParams.nLambda, We, cUnsupervisedTrainData, vTrainTargets, freq_train, CONFIG_strParams.RAEParams.sActivationFunction, CONFIG_strParams.RAEParams.sActivationFunctionPrime, cKids), ...
+            vRAEWeights, CONFIG_strParams.RAEParams.Options);
+    else
+        [vRAEWeights, cost] = minFunc( @(p)UNSUP_trainRAE(p, CONFIG_strParams.RAEParams.nAlphaCat, CONFIG_strParams.RAEParams.nCategorySize,CONFIG_strParams.RAEParams.nBeta, nDictionaryLength, CONFIG_strParams.RAEParams.nEmbeddingSize, ...
+            CONFIG_strParams.RAEParams.nLambda, We, cTrainData, vTrainTargets, freq_train, CONFIG_strParams.RAEParams.sActivationFunction, CONFIG_strParams.RAEParams.sActivationFunctionPrime, []), ...
+            vRAEWeights, CONFIG_strParams.RAEParams.Options);    
+    end
     
     [W1, W2, W3, W4, b1, b2, b3, Wcat,bcat, We] = NM_getRAEWeights(1, vRAEWeights, CONFIG_strParams.RAEParams.nEmbeddingSize, CONFIG_strParams.RAEParams.nCategorySize, nDictionaryLength);
     
@@ -51,10 +61,10 @@ function LM_startLearningProcessRAE(cTestData, vTestTargets, cTrainData, vTrainT
     [vSoftmaxWeights] = SUP_trainSoftmaxWithRAE(cTrainData, vTrainTargets, cTrainKids, vInitWeights, nDictionaryLength);
         
     % Train perofrmance
-    [nTrainAccuracy, nTrainPrecision, nTrainRecall, nTrainF1Score, vTrainPredictedTargets] = TST_computeClassificationErrorRAE(cTrainData, vTrainTargets, vSoftmaxWeights, vRAEWeights, nDictionaryLength, 'Training');
+    [nTrainAccuracy, nTrainPrecision, nTrainRecall, nTrainF1Score, vTrainPredictedTargets] = TST_computeClassificationErrorRAE(cTrainData, vTrainTargets, cTrainKids, vSoftmaxWeights, vRAEWeights, nDictionaryLength, 'Training');
 
     % Test performance
-    [nTestAccuracy, nTestPrecision, nTestRecall, nTestF1Score, vTestPredictedTargets] = TST_computeClassificationErrorRAE(cTestData, vTestTargets, vSoftmaxWeights, vRAEWeights, nDictionaryLength, 'Testing');
+    [nTestAccuracy, nTestPrecision, nTestRecall, nTestF1Score, vTestPredictedTargets] = TST_computeClassificationErrorRAE(cTestData, vTestTargets, cTestKids, vSoftmaxWeights, vRAEWeights, nDictionaryLength, 'Testing');
 
     % Print results    
     fid = fopen(CONFIG_strParams.sResultsFile,'a');

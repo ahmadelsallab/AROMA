@@ -1,4 +1,4 @@
-function [nAccuracy, nPrecision, nRecall, nF1Score, vPredictedTargets] = TST_computeClassificationErrorRAE(cData, vTargets, vSoftmaxWeights, vRAEWeights, nDictionaryLength, sTitle)
+function [nAccuracy, nPrecision, nRecall, nF1Score, vPredictedTargets] = TST_computeClassificationErrorRAE(cData, vTargets, cKids, vSoftmaxWeights, vRAEWeights, nDictionaryLength, sTitle)
 
 % Load configurations
 global CONFIG_strParams;
@@ -19,7 +19,7 @@ freq_train = freq_train/sum(freq_train);
 if(CONFIG_strParams.bKnownParsing)
     fulltraining_instances = NM_getFeatures(cData,0,...
         We,We2,W1,W2,W3,W4,b1,b2,b3,Wcat,bcat,CONFIG_strParams.RAEParams.nAlphaCat,CONFIG_strParams.RAEParams.nEmbeddingSize, ...
-        vTargets, freq_train, CONFIG_strParams.RAEParams.sActivationFunction, CONFIG_strParams.RAEParams.sActivationFunctionPrime, 1,cTrainKids);
+        vTargets, freq_train, CONFIG_strParams.RAEParams.sActivationFunction, CONFIG_strParams.RAEParams.sActivationFunctionPrime, 1,cKids);
         
 else
     fulltraining_instances = getFeatures(allSNum(train_ind),0,...

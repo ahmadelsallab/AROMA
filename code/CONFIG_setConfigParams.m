@@ -97,6 +97,7 @@ function CONFIG_setConfigParams()
    CONFIG_strParams.bKnownParsing = get(handles.bKnownParsing, 'Value');
         % Get the path to the known parse trees
         CONFIG_strParams.sParseFilePath = get(handles.sParseFilePath, 'String');
+        CONFIG_strParams.sUnsupervisedParseFilePath = get(handles.sUnsupervisedParseFilePath, 'String');
 
     %%%%%%%%%%%%%%%%%%%%%%
     % RAE Hyperparameters
