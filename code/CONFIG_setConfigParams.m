@@ -13,8 +13,8 @@ function CONFIG_setConfigParams()
     CONFIG_setConfigParams.eClassifierType = 'RAE';
     
     % Configuration of the dataset to be used
-    % ATB_Senti_RAE
-    CONFIG_strParams.sDataset = 'ATB_Senti_RAE';
+    % RAE
+    CONFIG_strParams.sDataset = 'RAE';
     
     % Split the input data 'uniform' or 'random' 'CrossValidation' 'KnownSplit
     CONFIG_strParams.sSplitCriteria = 'random';
@@ -138,3 +138,5 @@ function CONFIG_setConfigParams()
     CONFIG_strParams.SoftmaxOptions.maxIter = 1000;
     
     CONFIG_strParams.sResultsFile = '../output/ATB/resultsRAE.txt';
+    CONFIG_strParams.sRAETrainedParamsWorkspace = '../data/ATB/RAEWeights.mat';
+    CONFIG_strParams.sDataSplitWorkspace = '../data/ATB/dataSplits.mat';

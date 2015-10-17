@@ -11,4 +11,4 @@ fprintf(1, 'Configuration done successfuly\n');
 cd(CONFIG_strParams.sDefaultClassifierPath);
 
 % Call main entry function of the classifier
-MAIN_trainAndClassify(CONFIG_strParams);
+MAIN_trainAndClassify();

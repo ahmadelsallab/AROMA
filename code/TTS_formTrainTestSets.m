@@ -113,5 +113,5 @@ function [cTestData, vTestTargets, mcTrainData, vTrainTargets, cTrainKids, cTest
         
 
     end; % end for
-
+    save(CONFIG_strParams.sDataSplitWorkspace, 'cTestData', 'vTestTargets', 'cTrainData', 'vTrainTargets', 'cTrainKids', 'cTestKids');
 end % end function

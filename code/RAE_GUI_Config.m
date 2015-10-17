@@ -251,7 +251,6 @@ function run_Callback(hObject, eventdata, handles)
     cd(CONFIG_strParamsGUI.sDefaultClassifierPath);
 
     % Call main entry function of the classifier
-    %MAIN_trainAndClassify(CONFIG_strParamsGUI);
     
     % Decide which experiment to run
     
@@ -308,13 +307,16 @@ function run_RAE_Callback(hObject, eventdata, handles)
     
     % Raw experiment
     if(CONFIG_strParamsGUI.bWordEmbedding == 0)
-        run_ATB;
+        %run_ATB;
+        MAIN_trainAndClassify();
     % Separate words embedding
     elseif (CONFIG_strParamsGUI.bNgramValidWe == 1)
-        run_ATB_We; % run_Qalb_ATB.m
+        %run_ATB_We; % run_Qalb_ATB.m
+        MAIN_trainAndClassify();
     % Lexicon embeddings    
     elseif (CONFIG_strParamsGUI.bLexiconEmbedding == 1)
-        run_ArSenL_Embedding;
+        %run_ArSenL_Embedding;
+        MAIN_trainAndClassify();
         
     % Merge of lexicon and word embeddings
     elseif (CONFIG_strParamsGUI.bMergeLexiconNgram == 1)
@@ -322,27 +324,101 @@ function run_RAE_Callback(hObject, eventdata, handles)
             case 'Features level'
                 run_ArSenL_We;
             case 'Decision level'
-                %%%%%%%%%%%%%%%%%%%%%%%%% RAE TRAINING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%% EMBEDDING TRAINING %%%%%%%%%%%%%%%%%%%%%%%%%%%
+                cd(DBNPath);
+                % Set bReadyVocab = 0; inside run_ArSenL_We-->run_We 
+                % so that the word embedding training is done without ArSenL lexicon
+                run_ArSenL_We;
+                DBNPath = '..\..\..\..\Code\sentimentanalysis\classifiers\Configurations\';
+                RAEPath = '..\..\..\..\OMA\Code\RAE\';
+                cd(DBNPath);
+
+                % The output files are generated in the folder ATB_ArSenL_We
+                % we have to move them to the folders ATB_ArSenL_Embedding and
+                % ATB_ArSenL_We and rename them.
+                copyfile(['vocab_ArSenL_Embedding.mat'], [RAEPath '\data\ATB_ArSenL_Embedding\']);
+                copyfile(['vocab_We.mat'], [RAEPath '\data\ATB_We\']);
+                %movefile([RAEPath '\data\ATB_We\vocab_ArSenL_Embedding.mat'], [RAEPath '\data\ATB_We\vocab_We.mat']);
+                copyfile(['final_net_We.mat'], [RAEPath '\data\ATB_We\']);
+                movefile([RAEPath '\data\ATB_We\final_net_We.mat'], [RAEPath '\data\ATB_We\final_net.mat']);
+                copyfile(['final_net_ArSenL_embedding.mat'], [RAEPath '\data\ATB_ArSenL_Embedding\']);
+                movefile([RAEPath '\data\ATB_ArSenL_Embedding\final_net_ArSenL_embedding.mat'], [RAEPath '\data\ATB_ArSenL_Embedding\final_net.mat']);
+                copyfile(['input_data_ArSenL_Embedding_1.mat'], [RAEPath '\data\ATB_ArSenL_Embedding\']);
+                copyfile(['input_data_We_2.mat'], [RAEPath '\data\ATB_We\']);
+                % %%%%%%%%%%%%%%%%%%%%%%%%% RAE TRAINING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                % %%%%%%%%%%%%%%%%%%%%%%%%% ArSenL EMBEDDING TRAINING %%%%%%%%%%%%%%%%%%%%
+                % cd([RAEPath '\code\']);
+                % run_ArSenL_Embedding;
+                % training_instances_ArSenL_Embedding = training_instances;
+                % testing_instances_ArSenL_Embedding = testing_instances;
+                % save('..\..\..\..\OMA\Code\RAE\data\ATB_ArSenL_Embedding', 'training_instances_ArSenL_Embedding', 'testing_instances_ArSenL_Embedding', 'training_labels', 'testing_labels');
+
+                % %%%%%%%%%%%%%%%%%%%%%%%%% Word EMBEDDING TRAINING %%%%%%%%%%%%%%%%%%%%
+                % RAEPath = '..\..\..\..\OMA\Code\RAE\';
+                % cd([RAEPath '\code\']);
+                % run_ATB_We;
+                % training_instances_We = training_instances;
+                % testing_instances_We = testing_instances;
+                % save('..\..\..\..\OMA\Code\RAE\data\ATB_We', 'training_instances_We', 'testing_instances_We', 'training_labels', 'testing_labels');
+
+                % %%%%%%%%%%%%%%%%%%%%%%%%% Softmax %%%%%%%%%%%%%%%%%%%%
+                % load('..\..\..\..\OMA\Code\RAE\data\ATB_ArSenL_Embedding', 'training_instances_ArSenL_Embedding', 'testing_instances_ArSenL_Embedding', 'training_labels', 'testing_labels');
+                % load('..\..\..\..\OMA\Code\RAE\data\ATB_We', 'training_instances_We', 'testing_instances_We');
+                % softmax_Decision_Level;            
+
+               %%%%%%%%%%%%%%%%%%%%%%%%% RAE TRAINING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
                 %%%%%%%%%%%%%%%%%%%%%%%%% ArSenL EMBEDDING TRAINING %%%%%%%%%%%%%%%%%%%%
-                cd([RAEPath '\code\']);
-                run_ArSenL_Embedding;
-                training_instances_ArSenL_Embedding = training_instances;
-                testing_instances_ArSenL_Embedding = testing_instances;
+                %cd([RAEPath '\code\']);
+                % Set other embeddings to 0
+                CONFIG_strParams.bNgramValidWe = 0;
+                CONFIG_strParams.bLexiconEmbedding = 1;
+                MAIN_trainAndClassify();
+                load(CONFIG_strParams.sRAETrainedParamsWorkspace);
                 save('..\..\..\..\OMA\Code\RAE\data\ATB_ArSenL_Embedding', 'training_instances_ArSenL_Embedding', 'testing_instances_ArSenL_Embedding', 'training_labels', 'testing_labels');
-
+                load(CONFIG_strParams.sDataSplitWorkspace);
+                vRAEWeights_Lexicon = vRAEWeights;
+                [mTrainFeatures_Lexicon] = NM_feedFwdRAE(cTrainData, vRAEWeights, nDictionaryLength);               
+                [mTestFeatures_Lexicon] = NM_feedFwdRAE(cTestData, vRAEWeights, nDictionaryLength);    
                 %%%%%%%%%%%%%%%%%%%%%%%%% Word EMBEDDING TRAINING %%%%%%%%%%%%%%%%%%%%
-                RAEPath = '..\..\..\..\OMA\Code\RAE\';
-                cd([RAEPath '\code\']);
-                run_ATB_We;
-                training_instances_We = training_instances;
-                testing_instances_We = testing_instances;
-                save('..\..\..\..\OMA\Code\RAE\data\ATB_We', 'training_instances_We', 'testing_instances_We', 'training_labels', 'testing_labels');
-
+                CONFIG_strParams.bNgramValidWe = 1;
+                CONFIG_strParams.bLexiconEmbedding = 0;
+                MAIN_trainAndClassify();
+                load(CONFIG_strParams.sRAETrainedParamsWorkspace);
+                save('..\..\..\..\OMA\Code\RAE\data\ATB_ArSenL_Embedding', 'training_instances_ArSenL_Embedding', 'testing_instances_ArSenL_Embedding', 'training_labels', 'testing_labels');
+                load(CONFIG_strParams.sDataSplitWorkspace);
+                [mTrainFeatures_NgramWe] = NM_feedFwdRAE(cTrainData, vRAEWeights, nDictionaryLength);  
+                [mTestFeatures_NgramWe] = NM_feedFwdRAE(cTestData, vRAEWeights, nDictionaryLength); 
+                vRAEWeights_NgramWe = vRAEWeights;
                 %%%%%%%%%%%%%%%%%%%%%%%%% Softmax %%%%%%%%%%%%%%%%%%%%
-                load('..\..\..\..\OMA\Code\RAE\data\ATB_ArSenL_Embedding', 'training_instances_ArSenL_Embedding', 'testing_instances_ArSenL_Embedding', 'training_labels', 'testing_labels');
-                load('..\..\..\..\OMA\Code\RAE\data\ATB_We', 'training_instances_We', 'testing_instances_We');
-                softmax_Decision_Level;                
+                mMergeTesting = [mTestFeatures_Lexicon mTestFeatures_NgramWe];
+                mMergeTraining = [mTrainFeatures_Lexicon mTrainFeatures_NgramWe];
+                [vSoftmaxWeights] = NM_trainSoftmax(mMergeTraining, vTrainTargets)
+                % Train perofrmance
+                [nTrainAccuracy, nTrainPrecision, nTrainRecall, nTrainF1Score, vTrainPredictedTargets] = TST_computeClassificationErrorSoftmax(mMergeTraining, vTrainTargets, vSoftmaxWeights, 'Training');
+
+                % Test performance
+                [nTestAccuracy, nTestPrecision, nTestRecall, nTestF1Score, vTestPredictedTargets] = TST_computeClassificationErrorRAE(mMergeTesting, vTestTargets, vSoftmaxWeights, 'Testing');
+
+                % Print results    
+                fid = fopen(CONFIG_strParams.sResultsFile,'a');
+                fprintf(fid,CONFIG_strParams.sExperimentPurpose,[num2str(CONFIG_strParams.RAEParams.CVNUM),',',num2str(1),',',num2str(CONFIG_strParams.RAEParams.nEmbeddingSize),',',num2str(CONFIG_strParams.RAEParams.lambda(1)),',' , ...
+                    ',num2str(CONFIG_strParams.RAEParams.nAlphaCat),' , num2str(CONFIG_strParams.RAEParams.maxIter)]);
+
+                fprintf(fid,',train,%f,%f,%f,%f',nTrainAccuracy, nTrainPrecision, nTrainRecall, nTrainF1Score);
+                fprintf(fid,',test,%f,%f,%f,%f',nTestAccuracy, nTestPrecision, nTestRecall, nTestF1Score);
+
+                fprintf(1,CONFIG_strParams.sExperimentPurpose,[num2str(CONFIG_strParams.RAEParams.CVNUM),',',num2str(1),',',num2str(CONFIG_strParams.RAEParams.nEmbeddingSize),',',num2str(CONFIG_strParams.RAEParams.lambda(1)),',' , ...
+                    ',num2str(CONFIG_strParams.RAEParams.nAlphaCat),' , num2str(options.maxIter)]);
+
+                fprintf(1,',train,%f,%f,%f,%f',nTrainAccuracy, nTrainPrecision, nTrainRecall, nTrainF1Score);
+                fprintf(1,',test,%f,%f,%f,%f',nTestAccuracy, nTestPrecision, nTestRecall, nTestF1Score);
+
+                fclose(fid);    
+
+                save(CONFIG_strParams.sRAETrainedParamsWorkspace, 'vRAEWeights_Lexicon', 'vRAEWeights_NgramWe', 'vSoftmaxWeights', 'nDictionaryLength');                  
         end
     end
     
