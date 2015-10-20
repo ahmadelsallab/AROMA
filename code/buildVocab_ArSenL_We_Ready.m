@@ -13,7 +13,7 @@ function [words, allSStr, allSNum] = buildVocab_ArSenL_We_Ready(txtFileName, ind
 
     % Get the sentences line by line
 
-    line = fgets(fid);
+    line = fgetl(fid);
     %data = {};
     words = {};
     allSStr_pos = {};
@@ -42,21 +42,24 @@ function [words, allSStr, allSNum] = buildVocab_ArSenL_We_Ready(txtFileName, ind
         line_indices = indices(num, 1 : non_zero - 1);
         if(labels(num) == 1)
             fprintf(fid_pos, [line '\n']);
-            lineWords = splitLine(line);
+            %lineWords = splitLine(line);
+            lineWords = regexp(line,' ','split');
+            lineWords = lineWords';
             allSStr_pos{num_pos} = lineWords';
             allSNum_pos{num_pos} = line_indices;
             num_pos = num_pos + 1;
             words = [words; lineWords];
         elseif(labels(num) == 2)
             fprintf(fid_neg, [line '\n']);
-            lineWords = splitLine(line);
+            lineWords = regexp(line,' ','split');
+            lineWords = lineWords';
             allSStr_neg{num_neg} = lineWords';
             allSNum_neg{num_neg} = line_indices;
             num_neg = num_neg + 1;
             words = [words; lineWords];
         end
         num = num + 1;
-        line = fgets(fid);
+        line = fgetl(fid);
     end
     
     % % Make unique vocabulary

@@ -17,7 +17,7 @@ function [words, allSStr, allSNum] = buildVocab_ArSenL_Embedding_Ready(txtFileNa
     
     % Get the sentences line by line
 
-    line = fgets(fid);
+    line = fgetl(fid);
     %data = {};
     words = {};
     allSStr_pos = {};
@@ -50,27 +50,34 @@ function [words, allSStr, allSNum] = buildVocab_ArSenL_Embedding_Ready(txtFileNa
         line_indices = indices(num, 1 : non_zero - 1) + 1;
         %line_indices = indices(num, 1 : non_zero - 1);
         if(labels(num) == 1)
-            fprintf(fid_pos, [line '\n']);
-            lineWords = splitLine(line);
+            fprintf(fid_pos, line);
+            fprintf(fid_pos, '\n');
+            %lineWords = splitLine(line);
+            lineWords = regexp(line,' ','split');
+            lineWords = lineWords';
             allSStr_pos{num_pos} = lineWords';
             allSNum_pos{num_pos} = line_indices;
             num_pos = num_pos + 1;
             words = [words; lineWords];
         elseif(labels(num) == 2)
-            fprintf(fid_neg, [line '\n']);
-            lineWords = splitLine(line);
+            fprintf(fid_neg, line);
+            fprintf(fid_neg, '\n');
+            %lineWords = splitLine(line);
+            lineWords = regexp(line,' ','split');
+            lineWords = lineWords';
             allSStr_neg{num_neg} = lineWords';
             allSNum_neg{num_neg} = line_indices;
             num_neg = num_neg + 1;
             words = [words; lineWords];
         end
         %%% NEW
-        fprintf(fid_all, [line '\n']);
+        fprintf(fid_all, line);
+        fprintf(fid_all, '\n');
         allSStr{num} = lineWords';
         allSNum{num} = line_indices;
         %%%
         num = num + 1;
-        line = fgets(fid);
+        line = fgetl(fid);
     end
     %%% NEW
     %labels = labels';

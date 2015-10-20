@@ -8,11 +8,11 @@ function [words, allSStr, allSNum] = buildVocab_We(txtFileName, annotationsFileN
     fid_pos = fopen(file_pos, 'w', 'n', 'UTF-8');
 
     file_neg = '../data/ATB_We/rt-polarity.neg';
-    fid_neg = fopen(file_neg, 'w', 'n', 'UTF-8')
+    fid_neg = fopen(file_neg, 'w', 'n', 'UTF-8');
 
     % Get the sentences line by line
 
-    line = fgets(fid);
+    line = fgetl(fid);
     %data = {};
     words = {};
     allSStr_pos = {};
@@ -27,24 +27,30 @@ function [words, allSStr, allSNum] = buildVocab_We(txtFileName, annotationsFileN
     % Build the vocabulary
     while line > 0        
         %data = [data; line];
-        
+        line  =strtrim(line);
         % Get the words of each line
         %lineWords = textscan(line,'%s','delimiter',' ');
         if(labels(num) == 1)
             fprintf(fid_pos, line);
-            lineWords = splitLine(line);
+            fprintf(fid_pos, '\n');
+            %lineWords = splitLine(line);
+            lineWords = regexp(line,' ','split');
+            lineWords = lineWords';
             allSStr_pos{num_pos} = lineWords';
             num_pos = num_pos + 1;
             words = [words; lineWords];
         elseif(labels(num) == 2)
             fprintf(fid_neg, line);
-            lineWords = splitLine(line);
+            fprintf(fid_neg, '\n');
+            %lineWords = splitLine(line);
+            lineWords = regexp(line,' ','split');
+            lineWords = lineWords';
             allSStr_neg{num_neg} = lineWords';
             num_neg = num_neg + 1;
             words = [words; lineWords];
         end
         num = num + 1;
-        line = fgets(fid);
+        line = fgetl(fid);
     end
     
 

@@ -3,8 +3,8 @@ clear, clc;
 % Build the vocab cell array
 %txtFileName = '..\..\Datasets\ArSenL\corpus lemmas.txt';
 %indicesFileName = '..\..\Datasets\ArSenL\indices.txt';
-txtFileName = '..\..\Datasets\ArSenL\ArSenL RAE\No separate embedding (word-level)\ATB lemmas (words).txt';
-indicesFileName = '..\..\Datasets\ArSenL\ArSenL RAE\No separate embedding (word-level)\ATB indices (words).txt';
+txtFileName = '..\..\Datasets\ArSenL\ArSenL RAE\No separate embedding (token-level)\ATB lemmas (tokens).txt';
+indicesFileName = '..\..\Datasets\ArSenL\ArSenL RAE\No separate embedding (token-level)\ATB indices (tokens).txt';
 
 annotationsFileName = '..\..\Datasets\ArSenL\annotation_sentiment.txt';
 global CONFIG_strParamsGUI;
