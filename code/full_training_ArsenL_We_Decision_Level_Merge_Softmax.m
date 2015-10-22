@@ -8,7 +8,7 @@ RAEPath = '..\';
 cd(DBNPath);
 % Set bReadyVocab = 0; inside run_ArSenL_We-->run_We 
 % so that the word embedding training is done without ArSenL lexicon
-run_ArSenL_We;
+%run_ArSenL_We;
 DBNPath = '..\..\..\..\Code\sentimentanalysis\classifiers\Configurations\';
 RAEPath = '..\..\..\..\OMA\Code\RAE\';
 cd(DBNPath);
