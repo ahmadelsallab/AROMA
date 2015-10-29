@@ -50,7 +50,7 @@ disp(options);
 % Pre-process dataset
 %%%%%%%%%%%%%%%%%%%%%%
 % set this to different folds (1-10) and average to reproduce the results in the paper
-params.CVNUM = 2;
+params.CVNUM = 10;
 preProFile = ['../data/ATB_ArSenL_Embedding/RTData_CV' num2str(params.CVNUM) '.mat'];
 
 % read in polarity dataset
