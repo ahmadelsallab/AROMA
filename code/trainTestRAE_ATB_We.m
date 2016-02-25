@@ -51,7 +51,7 @@ disp(options);
 % Pre-process dataset
 %%%%%%%%%%%%%%%%%%%%%%
 % set this to different folds (1-10) and average to reproduce the results in the paper
-params.CVNUM = 10;
+params.CVNUM = 1;
 preProFile = ['../data/ATB_We/RTData_CV' num2str(params.CVNUM) '.mat'];
 
 % read in polarity dataset
@@ -62,6 +62,7 @@ else
 end
 sent_freq = ones(length(allSNum),1);
 [~,dictionary_length] = size(We2);
+
 
 % split this current fold into train and test
 index_list_train = cell2mat(allSNum(train_ind)');

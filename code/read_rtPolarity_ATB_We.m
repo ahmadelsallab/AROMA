@@ -143,9 +143,9 @@ end
 %We2 = We(:, unq);
 We2 = We;
 
-%cv_obj = cvpartition(labels,'kfold',10);
-%save('../data/ATB/cv_obj','cv_obj');
-load('../data/cv_obj', 'cv_obj');
+cv_obj = cvpartition(labels,'kfold',10);
+save('../data/ATB/cv_obj','cv_obj');
+%load('../data/cv_obj', 'cv_obj');
 full_train_ind = cv_obj.training(params.CVNUM);
 full_train_nums = find(full_train_ind);
 test_ind = cv_obj.test(params.CVNUM);

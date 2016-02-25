@@ -22,7 +22,7 @@ function [cData, vTargets, cKids, cWords, nDictionaryLength] = DCONV_convertSupe
     vTargets = csvread(sAnnotationsFileName);
     
     % Load the nIndices, if ready nIndices file exists.
-    if(sIndicesFileName != '')
+    if(sIndicesFileName ~= '')
         mIndices = csvread(sIndicesFileName);
         bReadyIndices = 1;
     else

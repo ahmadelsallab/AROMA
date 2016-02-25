@@ -14,7 +14,7 @@ function MAIN_trainAndClassify()
 	switch(CONFIG_strParams.sDataset)
         case 'ATB_Senti_RAE'
         	% The output of conversion is saved in CONFIG_strParams.sInputDataWorkspace
-			[cData, cUnsupervisedData, vTargets, cKids, cUnsupervisedKids, nDictionaryLength] = DCONV_convertDataset_RAE();
+			[cData, vTargets, cUnsupervisedData, cKids, cUnsupervisedKids, nDictionaryLength] = DCONV_convertDataset_RAE();
                         
         case 'Movie_Reviews'
             % TBD
@@ -28,6 +28,23 @@ function MAIN_trainAndClassify()
     fprintf(1, 'Conversion done successfuly\n');
     
 	fprintf(1, 'Splitting dataset into train and test sets...\n');
+%     cData_pos = {};
+%     vTargets_pos = [];
+%     cData_neg = {};
+%     vTargets_neg = [];
+% 
+%     for i = 1 : length(cData)
+%         if(vTargets(i) == 1)
+%             cData_pos = [cData_pos; cData(i)];
+%             vTargets_pos = [vTargets_pos; vTargets(i)];
+%         elseif(vTargets(i) == 2)
+%             cData_neg = [cData_neg; cData(i)];
+%             vTargets_neg = [vTargets_neg; vTargets(i)];
+%         end
+%         
+%     end
+%     cData = [cData_pos; cData_neg];
+%     vTargets = [vTargets_pos; vTargets_neg];
 	[cTestData, vTestTargets, cTrainData, vTrainTargets, cTrainKids, cTestKids] = TTS_formTrainTestSets(cData, vTargets, cKids);
     
 % 	switch (CONFIG_strParams.sInputFormat)
@@ -113,5 +130,5 @@ function MAIN_trainAndClassify()
 % 		
 % 		% Save the current configuration in the error performance workspace
 % 		save(CONFIG_strParams.sNameofErrWorkspace, '-append', 'nErr', 'nConfusionErr', 'nErrRate', 'nConfusionErrRate');
-	end
+%	end
 end

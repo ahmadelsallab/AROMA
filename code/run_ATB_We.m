@@ -1,6 +1,8 @@
 clear, clc, close all;
 
-
+global bKnownParses;
+bKnownParses = 0;
+bPrintParseTrees = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PREPROCESS ATB WITH ARSENL VOCABULARY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 preprocess_ATB_We;
 

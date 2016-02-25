@@ -18,11 +18,11 @@ freq_train = freq_train/sum(freq_train);
 
 if(CONFIG_strParams.bKnownParsing)
     fulltraining_instances = NM_getFeatures(cData,0,...
-        We,We2,W1,W2,W3,W4,b1,b2,b3,Wcat,bcat,CONFIG_strParams.RAEParams.nAlphaCat,CONFIG_strParams.RAEParams.nEmbeddingSize, ...
+        We,We,W1,W2,W3,W4,b1,b2,b3,Wcat,bcat,CONFIG_strParams.RAEParams.nAlphaCat,CONFIG_strParams.RAEParams.nEmbeddingSize, ...
         vTargets, freq_train, CONFIG_strParams.RAEParams.sActivationFunction, CONFIG_strParams.RAEParams.sActivationFunctionPrime, 1,cKids);
 else
     fulltraining_instances = NM_getFeatures(cData,0,...
-        We,We2,W1,W2,W3,W4,b1,b2,b3,Wcat,bcat,CONFIG_strParams.RAEParams.nAlphaCat,CONFIG_strParams.RAEParams.nEmbeddingSize, ...
+        We,We,W1,W2,W3,W4,b1,b2,b3,Wcat,bcat,CONFIG_strParams.RAEParams.nAlphaCat,CONFIG_strParams.RAEParams.nEmbeddingSize, ...
         vTargets, freq_train, CONFIG_strParams.RAEParams.sActivationFunction, CONFIG_strParams.RAEParams.sActivationFunctionPrime, 1, []);   
 end
 
@@ -59,7 +59,7 @@ AUC_neg
 plot(X_perf,Y_perf, 'r');
 legend(['Positive class, AUC = ' num2str(AUC_pos)], ['Negative class, AUC = ' num2str(AUC_neg)])
 hold off;
-saveas(gcf, [sTitle ' ROC with MaxIter_' num2str(options.maxIter)], 'fig');
+saveas(gcf, [sTitle ' ROC with MaxIter_' num2str(CONFIG_strParams.nMaxIter)], 'fig');
 
 
 % Prec vs recall
@@ -79,6 +79,6 @@ AUC_neg
 plot(X_perf,Y_perf, 'r');
 legend(['Positive class, AUC = ' num2str(AUC_pos)], ['Negative class, AUC = ' num2str(AUC_neg)])
 hold off;
-saveas(gcf, [sTitle ' Prec_Rec ROC with MaxIter_' num2str(options.maxIter)], 'fig');
+saveas(gcf, [sTitle ' Prec_Rec ROC with MaxIter_' num2str(CONFIG_strParams.nMaxIter)], 'fig');
 
 nAccuracy

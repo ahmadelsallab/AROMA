@@ -11,9 +11,10 @@ DBNPath = '..\..\..\..\Code\sentimentanalysis\classifiers\Configurations\';
 RAEPath = '..\..\..\..\OMA\Code\RAE\';
 cd(DBNPath);
 
-copyfile(['vocab_We.mat'], [RAEPath '\data\ATB_We\']);
-copyfile(['final_net_We.mat'], [RAEPath '\data\ATB_We\']);
-copyfile(['input_data_We_2.mat'], [RAEPath '\data\ATB_We\']);
+copyfile(['vocab_We.mat'], [RAEPath '\data\ATB_We\'], 'f');
+copyfile(['final_net_We.mat'], [RAEPath '\data\ATB_We\'], 'f');
+copyfile(['input_data_We_2.mat'], [RAEPath '\data\ATB_We\'], 'f');
+movefile([RAEPath '\data\ATB_We\final_net_We.mat'], [RAEPath '\data\ATB_We\final_net.mat'], 'f');
 
 %%%%%%%%%%%%%%%%%%%%%%%%% RAE TRAINING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cd([RAEPath '\code\']);

@@ -27,13 +27,15 @@ function [vWeights] = SUP_trainSoftmaxWithRAE(cTrainData, vTrainTargets, cTrainK
 
     if(CONFIG_strParams.bKnownParsing)
         fulltraining_instances = NM_getFeatures(cTrainData,0,...
-            We,We2,W1,W2,W3,W4,b1,b2,b3,Wcat,bcat,CONFIG_strParams.RAEParams.nAlphaCat,CONFIG_strParams.RAEParams.nEmbeddingSize, ...
+            We,We,W1,W2,W3,W4,b1,b2,b3,Wcat,bcat,CONFIG_strParams.RAEParams.nAlphaCat,CONFIG_strParams.RAEParams.nEmbeddingSize, ...
             vTrainTargets, freq_train, CONFIG_strParams.RAEParams.sActivationFunction, CONFIG_strParams.RAEParams.sActivationFunctionPrime, 1,cTrainKids);
             
     else
-        fulltraining_instances = NM_getFeatures(allSNum(train_ind),0,...
-            We,We2,W1,W2,W3,W4,b1,b2,b3,Wcat,bcat,CONFIG_strParams.RAEParams.nAlphaCat,CONFIG_strParams.RAEParams.nEmbeddingSize, ...
-            labels(:,train_ind), freq_train, CONFIG_strParams.RAEParams.sActivationFunction, CONFIG_strParams.RAEParams.sActivationFunctionPrime, 1, []);
+        
+    
+        fulltraining_instances = NM_getFeatures(cTrainData,0,...
+            We,We,W1,W2,W3,W4,b1,b2,b3,Wcat,bcat,CONFIG_strParams.RAEParams.nAlphaCat,CONFIG_strParams.RAEParams.nEmbeddingSize, ...
+            vTrainTargets, freq_train, CONFIG_strParams.RAEParams.sActivationFunction, CONFIG_strParams.RAEParams.sActivationFunctionPrime, 1, []);
 
         
     end
@@ -55,6 +57,6 @@ function [vWeights] = SUP_trainSoftmaxWithRAE(cTrainData, vTrainTargets, cTrainK
     CONFIG_strParams.SoftmaxOptions.maxIter = 1000;
 
     % Training
-    [vWeights, cost] = minFunc( @(p) soft_cost(p,training_instances, vTrainTargets, 1e-6),vWeights, CONFIG_strParams.SoftmaxOptions);
+    [vWeights, cost] = minFunc( @(p) soft_cost(p,training_instances, vTrainTargets', 1e-6),vWeights, CONFIG_strParams.SoftmaxOptions);
 
 

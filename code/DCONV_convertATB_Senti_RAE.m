@@ -20,10 +20,10 @@ function [cData, vTargets, cKids, nDictionaryLength] = DCONV_convertATB_Senti_RA
     
     % Load the vTargets
     vTargets = csvread(sAnnotationsFileName);
-    
-    % Load the nIndices, if ready nIndices file exists.
-    if(sIndicesFileName != '')
-        mIndices = csvread(sIndicesFileName);
+    % Load the mIndices, if ready mIndices file exists.
+    if(sIndicesFileName ~= '')
+        %mIndices = csvread(sIndicesFileName);
+        fid_ind = fopen(sIndicesFileName,'r','n','UTF-8');
         bReadyIndices = 1;
     else
         bReadyIndices = 0;

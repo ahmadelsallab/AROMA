@@ -5,7 +5,7 @@
 % cData: the binarized data (cData)
 % vTargets: the corresponding vTargets (vTargets)
 % cKids: the parse tree in case CONFIG_strParams.bKnownParses is 1
-function [cData, cUnsupervisedData, vTargets, cKids, cUnsupervisedKids, nDictionaryLength] = DCONV_convertSupervisedDataset_RAE()
+function [cData, vTargets, cUnsupervisedData, cKids, cUnsupervisedKids, nDictionaryLength] = DCONV_convertDataset_RAE()
     
     % Load configurations
     global CONFIG_strParams;
@@ -15,18 +15,21 @@ function [cData, cUnsupervisedData, vTargets, cKids, cUnsupervisedKids, nDiction
     sAnnotationsFileName = CONFIG_strParams.sAnnotationsFilePath;
     sKnownParseFileName = CONFIG_strParams.sParseFilePath;
     sKnownUnuspervisedParseFileName = CONFIG_strParams.sUnsupervisedParseFilePath;
-    sDirName = CONFIG_strParams.sDataDirectory;
+    
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Supervised dataset %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Open the raw text file in UTF-8
     fid = fopen(sTxtFileName,'r','n','UTF-8');
-    
+       
     % Load the vTargets
     vTargets = csvread(sAnnotationsFileName);
-    
-    % Load the nIndices, if ready nIndices file exists.
-    if(sIndicesFileName != '')
-        mIndices = csvread(sIndicesFileName);
+    % Labels should start from 0. vTargets = vTargets - 1; also works.
+    vTargets(find(vTargets == 2)) = 0;
+    %vTargets = vTargets - 1;
+    % Load the mIndices, if ready mIndices file exists.
+    if(sIndicesFileName ~= '')
+        %mIndices = csvread(sIndicesFileName);
+        fid_ind = fopen(sIndicesFileName,'r','n','UTF-8');
         bReadyIndices = 1;
     else
         bReadyIndices = 0;
@@ -39,25 +42,30 @@ function [cData, cUnsupervisedData, vTargets, cKids, cUnsupervisedKids, nDiction
     cRawData = {};
     ctrNum = 1;
     cKids  = {};
-    bKnownParses = CONFIG_strParams.bKnownParses;
+    bKnownParses = CONFIG_strParams.bKnownParsing;
     if(bKnownParses)
         cKids = DPREP_readTreeParses(sKnownParseFileName);
     end
     
-    fprintf(1, 'Start reading the input file...');
+    fprintf(1, 'Start reading the input file...\n');
     while sLine > 0        
         
         if(bReadyIndices)
             sLine = strtrim(sLine);
             % CSV files lines end with 0
-            vNonZero = find(nIndices(ctrNum,:) == 0);
-            vNonZero = vNonZero(1);
+            %vNonZero = find(mIndices(ctrNum,:) == 0);
+            %vNonZero = vNonZero(1);
             % Indices are zero based, while embedding lookup table is 1 based,
             % so we add 1 here
-            vLineIndices = nIndices(ctrNum, 1 : vNonZero - 1) + 1;
+            %vLineIndices = mIndices(ctrNum, 1 : vNonZero - 1) + 1;
+            vLineIndices = str2num(fgetl(fid_ind)) + 1;
             cRawData{ctrNum} = vLineIndices;
         else
-            % Get the sLine cWords
+            
+            sLine=strtrim(sLine);
+            %cLineWords = textscan(sLine,'%s','delimiter',' ');
+            %cLineWords = cLineWords{1,1};
+            
             cLineWords = regexp(sLine,' ','split');
             cLineWords = cLineWords';        
             cRawData{ctrNum} = cLineWords';
@@ -67,9 +75,10 @@ function [cData, cUnsupervisedData, vTargets, cKids, cUnsupervisedKids, nDiction
         end
         
         % Get next sLine
+        fprintf(1, 'Finished reading supervised %d lines\n', ctrNum);
         ctrNum = ctrNum + 1;
         sLine = fgetl(fid);
-        fprintf(1, 'Finished reading supervised %d lines', num2str(ctrNum-1));
+        
     end
     % Close the files
     fclose(fid);
@@ -80,7 +89,7 @@ function [cData, cUnsupervisedData, vTargets, cKids, cUnsupervisedKids, nDiction
     cSupervisedKids = cKids;
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Unsupervised dataset %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    if(sUnsupervisedTxtFileName != '')
+    if(sUnsupervisedTxtFileName ~= '')
         % Open the raw text file in UTF-8
         fid = fopen(sUnsupervisedTxtFileName,'r','n','UTF-8'); 
         
@@ -95,17 +104,18 @@ function [cData, cUnsupervisedData, vTargets, cKids, cUnsupervisedKids, nDiction
             cKids = DPREP_readTreeParses(sKnownUnuspervisedParseFileName);
         end
         
-        fprintf(1, 'Start reading the unsupervised input file...');
+        fprintf(1, 'Start reading the unsupervised input file...\n');
         while (sLine > 0 & ctrNum < CONFIG_strParams.nMaxNumLines)       
             
             if(bReadyIndices)
                 sLine = strtrim(sLine);
                 % CSV files lines end with 0
-                vNonZero = find(nIndices(ctrNum,:) == 0);
-                vNonZero = vNonZero(1);
+                %vNonZero = find(mIndices(ctrNum,:) == 0);
+                %vNonZero = vNonZero(1);
                 % Indices are zero based, while embedding lookup table is 1 based,
                 % so we add 1 here
-                vLineIndices = nIndices(ctrNum, 1 : vNonZero - 1) + 1;
+                %vLineIndices = mIndices(ctrNum, 1 : vNonZero - 1) + 1;
+                vLineIndices = str2num(fgetl(fid_ind)) + 1;
                 cRawData{ctrNum} = vLineIndices;
             else
                 % Get the sLine cWords
@@ -118,9 +128,10 @@ function [cData, cUnsupervisedData, vTargets, cKids, cUnsupervisedKids, nDiction
             end
             
             % Get next sLine
+            fprintf(1, 'Finished unsupervised reading %d lines\n', ctrNum);
             ctrNum = ctrNum + 1;
             sLine = fgetl(fid);
-            fprintf(1, 'Finished unsupervised reading %d lines', num2str(ctrNum-1));
+            
         end
         
         % Close the files
@@ -156,17 +167,17 @@ function [cData, cUnsupervisedData, vTargets, cKids, cUnsupervisedKids, nDiction
             nDictionaryLength = length(words);        
         end
     else
-        fprintf(1, 'Start vocabulary scoring...');
+        fprintf(1, 'Start vocabulary scoring...\n');
         % Make unique vocabulary
         if(CONFIG_strParams.bKnownVocabulary)
             % In case the vocabulary is mandated, we just load it
-            load(CONFIG_strParams.sVocabularyFile, 'cWords')
+            load(CONFIG_strParams.sVocabularyFile, 'cWords');
         else
             cWords = unique(cWords);        
         end
         wordMap = containers.Map(cWords,1:length(cWords));
         
-        % Now score for each sentence the nIndices of cWords
+        % Now score for each sentence the mIndices of cWords
         
         %%%%%%%%%%%%%%%%%%% Supervised %%%%%%%%%%%%%%%%%%%%%%%%%
         cData = {};
@@ -176,15 +187,18 @@ function [cData, cUnsupervisedData, vTargets, cKids, cUnsupervisedKids, nDiction
             actualWordIdx = 1;
             for wordIdx = 1 : size(cRawData{lineIdx}, 2)
                 % The following check must succeed in case of all dataset words are in the vocabulary. So actualWordIx = wordIdx.
-                % In case of knownVocabulary, only the words in the vocabulary will be scored and others are skipped.
+                % In case of knownVocabulary, only the words in the vocabulary will be scored and others are skipped, or initialized random.
                 if(isKey(wordMap, cRawData{lineIdx}{wordIdx}))
                     lineWordsIndices(actualWordIdx) = wordMap(cRawData{lineIdx}{wordIdx});
+                    actualWordIdx = actualWordIdx + 1;
+                elseif(CONFIG_strParams.bUseRandomVectorForOOV)
+                    lineWordsIndices(actualWordIdx) = length(wordMap) + 1;
                     actualWordIdx = actualWordIdx + 1;
                 end
             end
             cData{lineIdx} = lineWordsIndices;
         end
-        
+        cData = cData';
         %%%%%%%%%%%%%%%%%%% Unsupervised %%%%%%%%%%%%%%%%%%%%%%%%%
         cUnsupervisedData = {};
         cRawData = cUnsupervisedRawData;
@@ -197,12 +211,20 @@ function [cData, cUnsupervisedData, vTargets, cKids, cUnsupervisedKids, nDiction
                 if(isKey(wordMap, cRawData{lineIdx}{wordIdx}))
                     lineWordsIndices(actualWordIdx) = wordMap(cRawData{lineIdx}{wordIdx});
                     actualWordIdx = actualWordIdx + 1;
+                elseif(CONFIG_strParams.bUseRandomVectorForOOV)
+                    lineWordsIndices(actualWordIdx) = length(wordMap) + 1;
+                    actualWordIdx = actualWordIdx + 1;                    
                 end
             end
             cUnsupervisedData{lineIdx} = lineWordsIndices;
         end
-        fprintf(1, 'Vocabulary scoring done');
-    
-        nDictionaryLength = length(cWords);
+        fprintf(1, 'Vocabulary scoring done\n');
+        cUnsupervisedData = cUnsupervisedData';
+        if(CONFIG_strParams.bUseRandomVectorForOOV)
+            nDictionaryLength = length(cWords) + 1;
+        else
+            nDictionaryLength = length(cWords);
+        end
+        
     end
 end % end function

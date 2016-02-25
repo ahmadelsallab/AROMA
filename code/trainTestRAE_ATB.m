@@ -39,7 +39,7 @@ options.Method = 'lbfgs';
 options.display = 'on';
 options.maxIter = 90;
 if(~isempty(CONFIG_strParamsGUI))
-    params.embedding_size = CONFIG_strParamsGUI.nMaxIter;
+    options.maxIter = CONFIG_strParamsGUI.nMaxIter;
 end
 disp(params);
 disp(options);

@@ -16,7 +16,7 @@ addpath(genpath('tools/'))
 params.trainModel = 1;
 
 % node and word size
-load('../data/ATB_ArSenL_Embedding/final_net_ArSenL_embedding.mat');
+load('../data/trainTestRAE_ATB_ArSenL_embedding/final_net_SentiWordNet_embedding.mat');
 We = NM_strNetParams.cWeights{1};
 params.embedding_size = size(We, 2);
 

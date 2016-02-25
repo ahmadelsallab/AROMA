@@ -118,11 +118,12 @@ else
 %          J_min = J(1);
         
         % Append to the parse file
-        %file_parse = '..\data\parses.txt';
-        %fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
-        %fprintf(fid_parse, ['[' num2str(J_minpos) ',' num2str(J_minpos+1) ']\n']);
-        %fclose(fid_parse);
-        
+        if(CONFIG_strParams.bPrintParseTree)
+			file_parse = '..\data\parses.txt';
+			fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
+			fprintf(fid_parse, ['[' num2str(J_minpos) ',' num2str(J_minpos+1) '], ' num2str(J_min)'\n']);
+			fclose(fid_parse);
+        end
         Tree.node_y1c1(:,sl+j) = y1c1(:,J_minpos);
         Tree.node_y2c2(:,sl+j) = y2c2(:,J_minpos);
         Tree.nodeDelta_out1(:,sl+j) = f_prime(y1_unnormalized(:,J_minpos)) * y1c1(:,J_minpos);
@@ -136,7 +137,7 @@ else
         Tree.pp(collapsed_sentence(J_minpos)) = sl+j;
         Tree.pp(collapsed_sentence(J_minpos+1)) = sl+j;
         
-         global CONFIG_strParams.bKnownParsing;
+         
          if(CONFIG_strParams.bKnownParsing)
              Tree.kids(sl+j,:) = [collapsed_sentence(J_minpos) collapsed_sentence(J_minpos_2)];
          else
@@ -150,7 +151,7 @@ else
         
         % collapsed_sentence(J_minpos+1)=[];
         % collapsed_sentence(J_minpos)=sl+j;       
-       global CONFIG_strParams.bKnownParsing;
+       
        if(CONFIG_strParams.bKnownParsing)
              freq(J_minpos_2) = [];
              freq(J_minpos) = (Tree.numkids(Tree.kids(sl+j,1))*freq1(J_minpos) + Tree.numkids(Tree.kids(sl+j,2))*freq2(J_minpos))/(Tree.numkids(Tree.kids(sl+j,1))+Tree.numkids(Tree.kids(sl+j,2)));

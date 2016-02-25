@@ -21,7 +21,7 @@ elseif (CONFIG_strParams.bLexiconEmbedding)
     We = NM_strNetParams.cWeights{1};
     We = We';
 else
-    We = 1e-3*(rand(nHiddenSize, nDictionaryLength)*2*r-r);
+    We = 1e-3*(rand(nHiddenSize, nDictionaryLength)*2*r-r);    
 end
 
 Wcat = rand(nCatSize, nHiddenSize) * 2 * r - r;

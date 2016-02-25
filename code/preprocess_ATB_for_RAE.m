@@ -4,9 +4,12 @@ clear, clc;
 %txtFileName = '..\..\Datasets\ATB\input\ATB1v3_UTF8.txt';%..\..\Datasets\ArSenL\corpus lemmas.txt
 %annotationsFileName = '..\..\Datasets\ATB\annotations.txt';%..\..\Datasets\ArSenL\annotation_sentiment.txt
 %txtFileName = '..\..\Datasets\ArSenL\corpus lemmas.txt';
+%txtFileName = '..\..\Datasets\Eshrag\TwitterBasicExperiment\with hashtags\ArabicTweets (tokens).bw';
+%txtFileName = '..\..\Datasets\Eshrag\TwitterBasicExperiment\without hashtags\ArabicTweets (tokens, no hashtags).bw';
+%annotationsFileName = '..\..\Datasets\Eshrag\TwitterBasicExperiment\labels.txt';
 txtFileName = '..\..\Datasets\ATB\punctuations_handled\ATB (preprocessed).txt';
-annotationsFileName = '..\..\Datasets\ArSenL\annotation_sentiment.txt';
-knownParseFileName = '..\..\Datasets\ATB\stanford parser\word-level\atb (combined nodes indices, words).txt';
+annotationsFileName =  '..\..\Datasets\ATB\input\annotation_sentiment.txt';
+% knownParseFileName = '..\..\Datasets\ATB\stanford parser\word-level\atb (combined nodes indices, words).txt';
 global CONFIG_strParamsGUI;
 if(~isempty(CONFIG_strParamsGUI))
     txtFileName = CONFIG_strParamsGUI.sSupervisedDataSetPath;

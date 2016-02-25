@@ -1,5 +1,5 @@
-function features = NM_getFeatures(words_reIndexed,beta,We,We2,W1,W2,W3,W4,b1,b2,b3,Wcat,bcat,alpha_cat,...
-   embedding_size, labels, freq, func, func_prime, training, kids)
+function features = NM_getFeaturesRAE(words_reIndexed,beta,We,We2,W1,W2,W3,W4,b1,b2,b3,Wcat,bcat,alpha_cat,...
+   embedding_size, freq, func, func_prime, training, kids)
 
     % flag
     % 1 - top node only
@@ -15,9 +15,10 @@ function features = NM_getFeatures(words_reIndexed,beta,We,We2,W1,W2,W3,W4,b1,b2
 
     loc_bKnownParses = CONFIG_strParams.bKnownParsing;
 
-
-    parfor ii = 1:num_examples;
-    %for ii = 1:num_examples;
+    global bPrintParseTree;
+    loc_bPrintParseTree = bPrintParseTree;
+    %parfor ii = 1:num_examples;
+    for ii = 1:num_examples;
         words_rI = words_reIndexed{ii};
         nn = length(words_rI);
 
@@ -30,23 +31,30 @@ function features = NM_getFeatures(words_reIndexed,beta,We,We2,W1,W2,W3,W4,b1,b2
             words_embedded = L;
         end
         
-        % Start new sentence line
-        file_parse = '..\data\parses.txt';
-        fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
-        fprintf(fid_parse, ['SENTENCE ' num2str(ii) ']\n']);
-        fclose(fid_parse);    
+	
+    if(loc_bPrintParseTree)
+		% Start new sentence line
+		file_parse = '..\data\parses.txt';
+		fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
+		fprintf(fid_parse, ['SENTENCE [' num2str(ii) ']\n']);
+		fclose(fid_parse);    
+	end  
         if(loc_bKnownParses)
-            Tree = NM_forwardPropRAE(kids{ii}, W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, 0,beta, words_embedded, labels(:,ii), ...
+            
+            Tree = NM_forwardPropRAE_Bare(kids{ii}, W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, 0,beta, words_embedded, ...
                 embedding_size, nn, freq_here, func, func_prime);
         else
-            Tree = NM_forwardPropRAE([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, 0,beta, words_embedded, labels(:,ii), ...
+            Tree = NM_forwardPropRAE_Bare([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, 0,beta, words_embedded, ...
                 embedding_size, nn, freq_here, func, func_prime);          
         end
         
-        % Add enter after the sentence
-        fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
-        fprintf(fid_parse, [']\n']);
-        fclose(fid_parse);
+    
+    if(loc_bPrintParseTree)
+		% Add enter after the sentence
+		fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
+		fprintf(fid_parse, ['\n']);
+		fclose(fid_parse);
+	end
         
         if nn>1
             features1(ii,:) = Tree.nodeFeatures(:,end)';

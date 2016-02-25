@@ -29,11 +29,14 @@ for ii = 1:num_examples;
         words_embedded = L;
     end
     
-    % Start new sentence line
-    file_parse = '..\data\parses.txt';
-    fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
-    fprintf(fid_parse, ['SENTENCE ' num2str(ii) ']\n']);
-    fclose(fid_parse);    
+	global bPrintParseTree;
+    if(bPrintParseTree)
+		% Start new sentence line
+		file_parse = '..\data\parses.txt';
+		fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
+		fprintf(fid_parse, ['SENTENCE [' num2str(ii) ']\n']);
+		fclose(fid_parse);    
+	end  
     if(loc_bKnownParses)
     Tree = forwardPropRAE(kids{ii}, W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, 0,beta, words_embedded, labels(:,ii), ...
         embedding_size, nn, freq_here, func, func_prime);
@@ -44,10 +47,13 @@ for ii = 1:num_examples;
             
     end
     
-    % Add enter after the sentence
-    fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
-    fprintf(fid_parse, [']\n']);
-    fclose(fid_parse);
+    global bPrintParseTree;
+    if(bPrintParseTree)
+		% Add enter after the sentence
+		fid_parse = fopen(file_parse, 'a+', 'n', 'UTF-8');
+		fprintf(fid_parse, ['\n']);
+		fclose(fid_parse);
+    end
     
     if nn>1
         features1(ii,:) = Tree.nodeFeatures(:,end)';

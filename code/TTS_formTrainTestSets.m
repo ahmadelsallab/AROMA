@@ -10,7 +10,7 @@
 % vTestTargets: Test targetss.
 % cTrainData: Train features. 
 % vTrainTargets: Train targets. 
-function [cTestData, vTestTargets, mcTrainData, vTrainTargets, cTrainKids, cTestKids] = TTS_formTrainTestSets(cData, vTargets, cKids)
+function [cTestData, vTestTargets, cTrainData, vTrainTargets, cTrainKids, cTestKids] = TTS_formTrainTestSets(cData, vTargets, cKids)
     
     % Load configurations
     global CONFIG_strParams;
@@ -31,59 +31,64 @@ function [cTestData, vTestTargets, mcTrainData, vTrainTargets, cTrainKids, cTest
         randomorder=randperm(size(cData,1));       
     end % end if
 
-    for b = 1 : size(cData,1)
-        fprintf(1, 'Splitting example %d\n', b);
+
+        
         % Read the raw features and targets according to split criteria
         if strcmp(sCriteria, 'random')
-            mLocFeatures = cData(randomorder(b), :);
-            mLocTargets = vTargets(randomorder(b), :);
-            if(CONFIG_strParams.bKnownParsing)
-                mLocKids = cKids(randomorder(b), :);
+            for b = 1 : size(cData,1)
+                fprintf(1, 'Splitting example %d\n', b);
+                mLocFeatures = cData(randomorder(b), :);
+                mLocTargets = vTargets(randomorder(b), :);
+                if(CONFIG_strParams.bKnownParsing)
+                    mLocKids = cKids(randomorder(b), :);
+                end
+                % Feed test and train sets according to the ratio configured
+                if (mod(b-1, nTrainToTestFactor) == 0)	
+                    vTestTargets = [vTestTargets; mLocTargets];
+                    cTestData = [cTestData; mLocFeatures];
+                    if(CONFIG_strParams.bKnownParsing)
+                        cTestKids = [cTestKids; mLocKids];
+                    end
+                else
+                    vTrainTargets = [vTrainTargets; mLocTargets];
+                    cTrainData = [cTrainData; mLocFeatures];
+                    if(CONFIG_strParams.bKnownParsing)
+                        cTrainKids = [cTrainKids; mLocKids];
+                    end
+                end; % end if-else
             end
-            % Feed test and train sets according to the ratio configured
-            if (mod(b-1, nTrainToTestFactor) == 0)	
-                vTestTargets = [vTestTargets; mLocTargets];
-                cTestData = [cTestData; mLocFeatures];
-                if(CONFIG_strParams.bKnownParsing)
-                    cTestKids = [cTestKids; mLocKids];
-                end
-            else
-                vTrainTargets = [vTrainTargets; mLocTargets];
-                cTrainData = [cTrainData; mLocFeatures];
-                if(CONFIG_strParams.bKnownParsing)
-                    cTrainKids = [cTrainKids; mLocKids];
-                end
-            end; % end if-else
         elseif strcmp(sCriteria, 'uniform')
-            mLocFeatures = cData(b, :);
-            mLocTargets = vTargets(b, :);
-            if(CONFIG_strParams.bKnownParsing)
-                mLocKids = cKids(b, :);
+            for b = 1 : size(cData,1)
+                fprintf(1, 'Splitting example %d\n', b);
+                mLocFeatures = cData(b, :);
+                mLocTargets = vTargets(b, :);
+                if(CONFIG_strParams.bKnownParsing)
+                    mLocKids = cKids(b, :);
+                end
+
+                % Feed test and train sets according to the ratio configured
+                if (mod(b-1, nTrainToTestFactor) == 0)	
+                    vTestTargets = [vTestTargets; mLocTargets];
+                    cTestData = [cTestData; mLocFeatures];
+                    if(CONFIG_strParams.bKnownParsing)
+                        cTestKids = [cTestKids; mLocKids];
+                    end
+                else
+                    vTrainTargets = [vTrainTargets; mLocTargets];
+                    cTrainData = [cTrainData; mLocFeatures];
+                    if(CONFIG_strParams.bKnownParsing)
+                        cTrainKids = [cTrainKids; mLocKids];
+                    end
+                end; % end if-else
             end
-            
-            % Feed test and train sets according to the ratio configured
-            if (mod(b-1, nTrainToTestFactor) == 0)	
-                vTestTargets = [vTestTargets; mLocTargets];
-                cTestData = [cTestData; mLocFeatures];
-                if(CONFIG_strParams.bKnownParsing)
-                    cTestKids = [cTestKids; mLocKids];
-                end
-            else
-                vTrainTargets = [vTrainTargets; mLocTargets];
-                cTrainData = [cTrainData; mLocFeatures];
-                if(CONFIG_strParams.bKnownParsing)
-                    cTrainKids = [cTrainKids; mLocKids];
-                end
-            end; % end if-else
-            
         elseif strcmp(sCriteria, 'CrossValidation')
             cv_obj = cvpartition(vTargets,'kfold',nTrainToTestFactor);            
             %load('../data/ATB/cv_obj');
-            train_ind = cv_obj.training(params.CVNUM);
-            test_ind = cv_obj.test(params.CVNUM);
+            train_ind = cv_obj.training(CONFIG_strParams.RAEParams.CVNUM);
+            test_ind = cv_obj.test(CONFIG_strParams.RAEParams.CVNUM);
            
-            vTestTargets = cData(test_ind,:);
-            cTestData = vTargets(test_ind,:);
+            cTestData= cData(test_ind,:);
+            vTestTargets = vTargets(test_ind,:);
             vTrainTargets = vTargets(train_ind,:);
             cTrainData = cData(train_ind,:);
             if(CONFIG_strParams.bKnownParsing)
@@ -101,8 +106,8 @@ function [cTestData, vTestTargets, mcTrainData, vTrainTargets, cTrainKids, cTest
             test_ind(1:236) = 1;
             test_ind = logical(test_ind);
             
-            vTestTargets = cData(test_ind,:);
-            cTestData = vTargets(test_ind,:);
+            cTestData = cData(test_ind,:);
+            vTestTargets = vTargets(test_ind,:);
             vTrainTargets = vTargets(train_ind,:);
             cTrainData = cData(train_ind,:);
             if(CONFIG_strParams.bKnownParsing)
@@ -110,8 +115,8 @@ function [cTestData, vTestTargets, mcTrainData, vTrainTargets, cTrainKids, cTest
                 cTrainKids = cKids(train_ind, :);
             end
         end % end if-elseif
-        
 
-    end; % end for
+    vTrainTargets = vTrainTargets';
+    vTestTargets = vTestTargets';
     save(CONFIG_strParams.sDataSplitWorkspace, 'cTestData', 'vTestTargets', 'cTrainData', 'vTrainTargets', 'cTrainKids', 'cTestKids');
 end % end function
