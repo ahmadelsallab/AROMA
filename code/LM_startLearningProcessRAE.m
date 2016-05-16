@@ -85,5 +85,5 @@ function LM_startLearningProcessRAE(cTestData, vTestTargets, cTrainData, vTrainT
 
     fclose(fid);    
 
-    save(CONFIG_strParams.sRAETrainedParamsWorkspace, 'vRAEWeights', 'vSoftmaxWeights', 'nDictionaryLength');
+    save(CONFIG_strParams.sRAETrainedParamsWorkspace, 'vRAEWeights', 'vSoftmaxWeights', 'nDictionaryLength', 'vTrainPredictedTargets', 'vTestPredictedTargets');
 end % end function

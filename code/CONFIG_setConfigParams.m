@@ -26,6 +26,10 @@ function CONFIG_setConfigParams()
         %CONFIG_strParams.vTrainRange = 237:end;
         %CONFIG_strParams.vTestRange = 1:236;
     
+    % In case of KnownSplit, set the following parameters
+    CONFIG_strParams.nDatasetSize = 1180; 
+    CONFIG_strParams.nTestsetIndex = 236; 
+    
     % Ration of train to test factor ratio
     CONFIG_strParams.nTrainToTestFactor = 10; % Nearly examples are train
     

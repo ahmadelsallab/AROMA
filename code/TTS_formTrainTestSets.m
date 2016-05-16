@@ -98,12 +98,12 @@ function [cTestData, vTestTargets, cTrainData, vTrainTargets, cTrainKids, cTestK
             
         elseif strcmp(sCriteria, 'KnownSplit')
 
-            train_ind = zeros(1180, 1);
-            train_ind(237:end) = 1;
+            train_ind = zeros(CONFIG_strParams.nDatasetSize, 1);
+            train_ind(CONFIG_strParams.nTestsetIndex + 1:end) = 1;
             train_ind = logical(full_train_ind);
             
-            test_ind = zeros(1180, 1);
-            test_ind(1:236) = 1;
+            test_ind = zeros(CONFIG_strParams.nDatasetSize, 1);
+            test_ind(1:CONFIG_strParams.nTestsetIndex) = 1;
             test_ind = logical(test_ind);
             
             cTestData = cData(test_ind,:);

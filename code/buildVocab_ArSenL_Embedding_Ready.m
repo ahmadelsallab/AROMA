@@ -84,6 +84,7 @@ end
             lineWords = regexp(line,' ','split');
             lineWords = lineWords';
             allSStr_neg{num_neg} = lineWords';
+            allSNum_neg{num_neg} = line_indices;
         global bKnownParses;
         if(bKnownParses)
             allKids_neg{num_neg} = allKids{num};

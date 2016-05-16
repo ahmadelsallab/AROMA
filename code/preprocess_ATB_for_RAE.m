@@ -7,9 +7,11 @@ clear, clc;
 %txtFileName = '..\..\Datasets\Eshrag\TwitterBasicExperiment\with hashtags\ArabicTweets (tokens).bw';
 %txtFileName = '..\..\Datasets\Eshrag\TwitterBasicExperiment\without hashtags\ArabicTweets (tokens, no hashtags).bw';
 %annotationsFileName = '..\..\Datasets\Eshrag\TwitterBasicExperiment\labels.txt';
-txtFileName = '..\..\Datasets\ATB\punctuations_handled\ATB (preprocessed).txt';
+%txtFileName = '..\..\Datasets\ATB\punctuations_handled\ATB (preprocessed tokens).txt';
+txtFileName = '..\..\Datasets\ATB\gold_parses\ATB_GOLD_CORPUS.tok';
 annotationsFileName =  '..\..\Datasets\ATB\input\annotation_sentiment.txt';
-% knownParseFileName = '..\..\Datasets\ATB\stanford parser\word-level\atb (combined nodes indices, words).txt';
+knownParseFileName = '..\..\Datasets\ATB\gold_parses\ATB_GOLD_INDICES.tok';
+%knownParseFileName = '..\..\Datasets\ATB\stanford parser\token-level\atb (combined nodes indices, tokens).txt';
 global CONFIG_strParamsGUI;
 if(~isempty(CONFIG_strParamsGUI))
     txtFileName = CONFIG_strParamsGUI.sSupervisedDataSetPath;

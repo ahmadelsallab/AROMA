@@ -26,6 +26,8 @@ save(vocab_workspace, 'cWords');
 %%%%%% Load vectors %%%%%
 fprintf('Loading word vectors\n');
 vectors = load(word_vecotrs_file_name);
-vectors = [vectors; rand(1, size(vectors, 2))];
+if(CONFIG_strParams.bUseRandomVectorForOOV)
+    vectors = [vectors; rand(1, size(vectors, 2))];
+end
 NM_strNetParams.cWeights{1} = vectors;
 save(emebdding_workspace, 'NM_strNetParams');

@@ -54,9 +54,6 @@ for j=1:sl-1
          J_min = J(J_minpos);
      else
          [J_min J_minpos] = min(J);
-
-
-
      end
 
      %[J_min J_minpos] = min(J);

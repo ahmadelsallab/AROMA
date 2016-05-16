@@ -33,7 +33,7 @@ func_prime = @norm1tanh_prime;
 % parameters for the optimizer
 options.Method = 'lbfgs';
 options.display = 'on';
-options.maxIter = 70;
+options.maxIter = 1;
 
 disp(params);
 disp(options);
@@ -71,7 +71,7 @@ freq_train = freq_train/sum(freq_train);
 freq_cv = freq_cv/sum(freq_cv);
 freq_test = freq_test/sum(freq_test);
 
-cat_size=1;% for multinomial distributions this would be >1
+cat_size=5;% for multinomial distributions this would be >1
 numExamples = length(allSNum(train_ind));
 
 

@@ -25,9 +25,16 @@ function [cData, vTargets, cUnsupervisedData, cKids, cUnsupervisedKids, nDiction
     vTargets = csvread(sAnnotationsFileName);
     % Labels should start from 0. vTargets = vTargets - 1; also works.
     vTargets(find(vTargets == 2)) = 0;
+    
+    vTargets_ = zeros(size(vTargets, 1), CONFIG_strParams.RAEParams.nCategorySize, 1);
+    for i = 1 : size(vTargets, 1)
+       vTargets_(i, vTargets(i) + 1) = 1;
+    end
+    vTargets = vTargets_;
+    
     %vTargets = vTargets - 1;
     % Load the mIndices, if ready mIndices file exists.
-    if(sIndicesFileName ~= '')
+    if(~strcmp(sIndicesFileName, ''))
         %mIndices = csvread(sIndicesFileName);
         fid_ind = fopen(sIndicesFileName,'r','n','UTF-8');
         bReadyIndices = 1;
@@ -166,12 +173,16 @@ function [cData, vTargets, cUnsupervisedData, cKids, cUnsupervisedKids, nDiction
             load(CONFIG_strParams.sVocabularyFile, 'words');
             nDictionaryLength = length(words);        
         end
+        cData = cSupervisedRawData';
+        cUnsupervisedData = cUnsupervisedRawData';
     else
         fprintf(1, 'Start vocabulary scoring...\n');
         % Make unique vocabulary
         if(CONFIG_strParams.bKnownVocabulary)
             % In case the vocabulary is mandated, we just load it
             load(CONFIG_strParams.sVocabularyFile, 'cWords');
+            load(CONFIG_strParams.sVocabularyFile, 'words');
+            cWords = words;
         else
             cWords = unique(cWords);        
         end
@@ -194,6 +205,21 @@ function [cData, vTargets, cUnsupervisedData, cKids, cUnsupervisedKids, nDiction
                 elseif(CONFIG_strParams.bUseRandomVectorForOOV)
                     lineWordsIndices(actualWordIdx) = length(wordMap) + 1;
                     actualWordIdx = actualWordIdx + 1;
+                elseif(CONFIG_strParams.bExtendLookupTableForOOV)
+                    % Extend the vocabulary
+                    cWords = [cWords; cRawData{lineIdx}{wordIdx}];
+                    
+                    % Update the wordMap after adding the new entry
+                    wordMap = containers.Map(cWords,1:length(cWords));
+                    lineWordsIndices(actualWordIdx) = wordMap(cRawData{lineIdx}{wordIdx});
+                    actualWordIdx = actualWordIdx + 1;
+                    
+                    % Extend the embedding vectors
+                    if (CONFIG_strParams.bNgramValidWe)       
+                        load(CONFIG_strParams.sNgramValidWorkspaceName, 'NM_strNetParams');
+                        NM_strNetParams.cWeights{1} = [NM_strNetParams.cWeights{1}; rand(1, size(NM_strNetParams.cWeights{1}, 2))];
+                        save(CONFIG_strParams.sNgramValidWorkspaceName, 'NM_strNetParams');                        
+                    end                                       
                 end
             end
             cData{lineIdx} = lineWordsIndices;
@@ -213,7 +239,24 @@ function [cData, vTargets, cUnsupervisedData, cKids, cUnsupervisedKids, nDiction
                     actualWordIdx = actualWordIdx + 1;
                 elseif(CONFIG_strParams.bUseRandomVectorForOOV)
                     lineWordsIndices(actualWordIdx) = length(wordMap) + 1;
-                    actualWordIdx = actualWordIdx + 1;                    
+                    actualWordIdx = actualWordIdx + 1;    
+                elseif(CONFIG_strParams.bExtendLookupTableForOOV)
+                    % Extend the vocabulary
+                    cWords = [cWords; cRawData{lineIdx}{wordIdx}];
+                    
+                    % Update the wordMap after adding the new entry
+                    wordMap = containers.Map(cWords,1:length(cWords));
+                    lineWordsIndices(actualWordIdx) = wordMap(cRawData{lineIdx}{wordIdx});
+                    actualWordIdx = actualWordIdx + 1;
+                    
+                    % Extend the embedding vectors
+                    if (CONFIG_strParams.bNgramValidWe)       
+                        load(CONFIG_strParams.sNgramValidWorkspaceName, 'NM_strNetParams');
+                        NM_strNetParams.cWeights{1} = [NM_strNetParams.cWeights{1}; rand(1, size(NM_strNetParams.cWeights{1}, 2))];
+                        save(CONFIG_strParams.sNgramValidWorkspaceName, 'NM_strNetParams');                        
+                    end
+                    
+
                 end
             end
             cUnsupervisedData{lineIdx} = lineWordsIndices;

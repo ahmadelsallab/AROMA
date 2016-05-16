@@ -16,7 +16,7 @@ addpath(genpath('tools/'))
 params.trainModel = 1;
 
 % node and word size
-load('../data/trainTestRAE_ATB_ArSenL_embedding/final_net_SentiWordNet_embedding.mat');
+load('../data/ATB_ArSenL_Embedding/final_net.mat');
 We = NM_strNetParams.cWeights{1};
 params.embedding_size = size(We, 2);
 
@@ -59,6 +59,7 @@ if ~exist(preProFile,'file')
 else
     load(preProFile, 'labels','train_ind','test_ind', 'cv_ind','We2','allSNum','test_nums');
 end
+read_rtPolarity_ATB_ArSenL_embedding
 sent_freq = ones(length(allSNum),1);
 [~,dictionary_length] = size(We2);
 
@@ -110,11 +111,22 @@ if params.trainModel
     % Set unsupervised word embedding dataset
     snum_We = allSNum(train_ind);
     sent_freq_We = sent_freq;
-        
-    [opttheta, cost] = minFunc( @(p)RAECost(p, params.alpha_cat, cat_size,params.beta, dictionary_length, params.embedding_size, ...
+    global bKnownParses;
+    
+    if(bKnownParses == 1)
+        kids = allKids(train_ind);
+        [opttheta, cost] = minFunc( @(p)RAECost(p, params.alpha_cat, cat_size,params.beta, dictionary_length, params.embedding_size, ...
+        params.lambda, We2, snum, lbl, freq_train, sent_freq, func, func_prime, kids), ...
+        theta, options);
+        theta = opttheta;
+
+    else
+        [opttheta, cost] = minFunc( @(p)RAECost(p, params.alpha_cat, cat_size,params.beta, dictionary_length, params.embedding_size, ...
         params.lambda, We2, snum, lbl, freq_train, sent_freq, func, func_prime), ...
         theta, options);
-    theta = opttheta;
+        theta = opttheta;
+    
+    end
     
     [W1, W2, W3, W4, b1, b2, b3, Wcat,bcat, We] = getW(1, theta, params.embedding_size, cat_size, dictionary_length);
     

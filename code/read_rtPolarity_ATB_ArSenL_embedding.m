@@ -9,7 +9,7 @@ useTrees = 0;
 %sizeWe = [50  length(words)];
 %r  = 0.05;   % we'll choose weights uniformly from the interval [-r, r]
 %We = rand(sizeWe) * 2 * r - r;
-load('../data/ATB_ArSenL_Embedding/final_net_ArSenL_embedding.mat');
+load('../data/ATB_ArSenL_Embedding/final_net.mat');
 We = NM_strNetParams.cWeights{1};
 We = We';
 sizeWe = size(We);
@@ -29,14 +29,15 @@ fid2 = fopen(file2);
 
 % these files also contain parse trees which we do not help in our experiments
 %load('../data/rt-polaritydata/rt-polarity_pos_binarized.mat','allSNum','allSStr');
-load('../data/ATB_ArSenL_Embedding/rt-polarity_pos_binarized.mat','allSNum','allSStr');
+load('../data/ATB_ArSenL_Embedding/rt-polarity_pos_binarized.mat','allSNum','allSStr', 'allKids_pos');
 allSNum_pos = allSNum;
 allSStr_pos = allSStr;
 
 %load('../data/rt-polaritydata/rt-polarity_neg_binarized.mat','allSNum','allSStr');
-load('../data/ATB_ArSenL_Embedding/rt-polarity_neg_binarized.mat','allSNum','allSStr');
+load('../data/ATB_ArSenL_Embedding/rt-polarity_neg_binarized.mat','allSNum','allSStr', 'allKids_neg');
 allSNum = [allSNum_pos allSNum];
 allSStr = [allSStr_pos allSStr];
+allKids = [allKids_pos allKids_neg];
 clear allSNum_pos;
 clear allSStr_pos;
 
@@ -200,4 +201,4 @@ allSNum = words_reIndexed;
 
 isnonZero = ones(1,length(allSNum));
 
-save(preProFile, 'labels', 'words_reIndexed', 'full_train_ind','train_ind','cv_ind','test_ind','We2','allSNum','unq','isnonZero','test_nums','full_train_nums');
+save(preProFile, 'labels', 'words_reIndexed', 'full_train_ind','train_ind','cv_ind','test_ind','We2','allSNum','unq','isnonZero','test_nums','full_train_nums', 'allKids');

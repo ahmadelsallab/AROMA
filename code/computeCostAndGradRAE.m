@@ -66,10 +66,11 @@ for ii = range;
              
              else
                  Tree = forwardPropRAE([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
-                if(we == 0)            
-                    allKids{ii} = Tree.kids;
-                end
+
              end
+            if(we == 0)            
+                allKids{ii} = Tree.kids;
+            end
              % Tree = forwardPropRAE([], W1,W2,W3,W4,b1,b2,b3, Wcat, bcat, alpha_cat, updateWcat,beta, words_embedded, labels, hiddenSize, sl, freq, f, f_prime);
              
              % Add enter after the sentence

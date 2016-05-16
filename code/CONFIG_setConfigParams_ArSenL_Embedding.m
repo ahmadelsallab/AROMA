@@ -1,10 +1,10 @@
 % This function is reponsible of setting all the configuration parameters.
 % The output of this  function is a global structure CONFIG_strParams, so that any component needs to read a parameter it can access it.
-function CONFIG_setConfigParams_RAE()
+function CONFIG_setConfigParams_ArSenL_Embedding()
     global CONFIG_strParams;
     
     % State the experiment purpose
-    CONFIG_strParams.sExperimentPurpose = 'RAE with ArSenL embeddings';
+    CONFIG_strParams.sExperimentPurpose = 'RAE with ArSenL embeddings from the 50% QALB';
     
     % Set the path to the classifier, which is the same path in case of RAE
     CONFIG_strParams.sDefaultClassifierPath = pwd;
@@ -39,12 +39,12 @@ function CONFIG_setConfigParams_RAE()
         
         % The following two flags should be mutually exclusive (never 1
         % together). Otherwise the priority shall be for bUseRandomVectorForOOV
-        CONFIG_strParams.bUseRandomVectorForOOV  = 0;
+        CONFIG_strParams.bUseRandomVectorForOOV  = 1;
         CONFIG_strParams.bExtendLookupTableForOOV  = 0;
     
     % Full path to the raw txt dataset. Each line is a separate case.
     %CONFIG_strParams.sSupervisedDataSetPath = '..\..\Datasets\ATB\punctuations_handled\ATB (preprocessed tokens).txt';
-    CONFIG_strParams.sSupervisedDataSetPath = '..\..\Datasets\ATB\gold_parses\ATB_GOLD_CORPUS.tok';
+    CONFIG_strParams.sSupervisedDataSetPath = '..\..\Datasets\ATB\experiments\corpus preprocessed\ATB (preprocessed tokens).txt';
      
     % Full path to the annotations associated with the sSupervisedDataSetPath
     CONFIG_strParams.sAnnotationsFilePath = '..\..\Datasets\ATB\input\annotation_sentiment.txt';
@@ -81,7 +81,7 @@ function CONFIG_setConfigParams_RAE()
                CONFIG_strParams.nMaxNumLines = 1000;
 %           
 %           % blexiconembedding embedding
-           CONFIG_strParams.bLexiconEmbedding = 0;
+           CONFIG_strParams.bLexiconEmbedding = 1;
 %             
 %             % The name of the embedding workspace
              CONFIG_strParams.sLexiconEmbeddingWorkspaceName = '../data/ATB_ArSenL_Embedding/final_net_ArSenL_embedding.mat';
@@ -90,11 +90,11 @@ function CONFIG_setConfigParams_RAE()
              CONFIG_strParams.bLexiconEmbeddingObjectiveScoreIncluded = 0;
 %             
 %             % Path to indices file mapped to bLexiconEmbedding entries
-             CONFIG_strParams.sIndicesFileName = '';
+             CONFIG_strParams.sIndicesFileName = '..\..\Datasets\ATB\experiments\files for arsenl embedding\No separate embedding (token-level)\ATB indices (tokens).txt';
 %             
 %             % Path to sVocabularyFilePath file
              if(CONFIG_strParams.bLexiconEmbedding)
-                 CONFIG_strParams.sVocabularyFile = '';
+                 CONFIG_strParams.sVocabularyFile = '../data/ATB_ArSenL_Embedding/vocab_ArSenL_Embedding.mat';
              end
 %             
 %         % Flag to indicate to merge bLexiconEmbedding with word embedding
@@ -105,10 +105,10 @@ function CONFIG_setConfigParams_RAE()
                 
    % Flag to indicate if separate parser was used to get ready parse
    % trees
-   CONFIG_strParams.bKnownParsing = 0;
- 		CONFIG_strParams.bPrintParseTree = 1;
+   CONFIG_strParams.bKnownParsing = 1;
+ 		CONFIG_strParams.bPrintParseTree = 0;
 %         % Get the path to the known parse trees
-         CONFIG_strParams.sParseFilePath = '..\..\Datasets\ATB\gold_parses\ATB_GOLD_INDICES.tok';
+         CONFIG_strParams.sParseFilePath = '..\..\Datasets\ATB\experiments\files for experiments with stanford parses\token-level\atb (combined nodes indices, tokens).txt';
          CONFIG_strParams.sUnsupervisedParseFilePath = '';
 
     %%%%%%%%%%%%%%%%%%%%%%

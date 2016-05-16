@@ -3,11 +3,11 @@ clear, clc;
 % Build the vocab cell array
 %txtFileName = '..\..\Datasets\ArSenL\corpus lemmas.txt';
 %indicesFileName = '..\..\Datasets\ArSenL\indices.txt';
-txtFileName = '..\..\Datasets\ArSenL\ArSenL RAE\No separate embedding (token-level)\ATB lemmas (tokens).txt';
-indicesFileName = '..\..\Datasets\ArSenL\ArSenL RAE\No separate embedding (token-level)\ATB indices (tokens).txt';
+txtFileName = '..\..\Datasets\ATB\experiments\corpus preprocessed\ATB (preprocessed tokens).txt';
+indicesFileName = '..\..\Datasets\ATB\experiments\files for arsenl embedding\separate embedding (token-level)\ATB indices (tokens).txt';
 
-annotationsFileName = '..\..\Datasets\ArSenL\annotation_sentiment.txt';
-knownParseFileName = '..\..\Datasets\ATB\stanford parser\word-level\atb (combined nodes indices, words).txt';
+annotationsFileName = '..\..\Datasets\ATB\experiments\annotation_sentiment.txt';
+knownParseFileName = '..\..\Datasets\ATB\experiments\files for experiments with stanford parses\token-level\atb (combined nodes indices, tokens).txt';
 global CONFIG_strParamsGUI;
 if(~isempty(CONFIG_strParamsGUI))
     txtFileName = CONFIG_strParamsGUI.sSupervisedDataSetPath;

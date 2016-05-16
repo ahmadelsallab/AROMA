@@ -1,0 +1,7 @@
+__pycache__/*
+*.bin
+*.mat
+*.asv
+*.txt
+data
+output
